@@ -1,0 +1,4 @@
+{
+  "name": "EquationShift.Gameplay",
+  "references": ["Unity.InputSystem"]
+}
