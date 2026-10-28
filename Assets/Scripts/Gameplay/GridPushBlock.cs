@@ -2,6 +2,8 @@ using UnityEngine;
 
 namespace EquationShift
 {
+    public enum AncorSide { T, D, L, R }
+
     [DisallowMultipleComponent]
     [RequireComponent(typeof(Rigidbody2D), typeof(BoxCollider2D))]
     public sealed class GridPushBlock : MonoBehaviour
@@ -10,6 +12,9 @@ namespace EquationShift
         [SerializeField, Min(0.02f)] private float moveDuration = 0.16f;
         [SerializeField] private bool isMovable = true;
         [SerializeField] private char value = '0';
+        [SerializeField] private bool isAncor;
+        [Tooltip("Lado da passagem associada: T = Top, D = Down, L = Left, R = Right.")]
+        [SerializeField] private AncorSide ancorSide;
 
         private Rigidbody2D body;
         private Collider2D shape;
@@ -21,6 +26,8 @@ namespace EquationShift
         public bool IsMoving { get; private set; }
         public bool IsMovable { get => isMovable; set => isMovable = value; }
         public char Value { get => value; set => this.value = value; }
+        public bool IsAncor { get => isAncor; set => isAncor = value; }
+        public AncorSide AncorSide { get => ancorSide; set => ancorSide = value; }
         public Vector3Int Cell => cell;
         public Collider2D Collider => shape;
 
@@ -47,7 +54,7 @@ namespace EquationShift
         // Public entry point for later abilities. Never moves diagonally or pushes a chain.
         public bool TryMove(Vector2Int direction)
         {
-            if (!isMovable || IsMoving || !LevelGrid.IsCardinal(direction)) return false;
+            if (!isMovable || isAncor || IsMoving || !LevelGrid.IsCardinal(direction)) return false;
             Vector3Int destination = cell + new Vector3Int(direction.x, direction.y, 0);
             if (!board.IsFloor(destination) || board.BlockAt(destination) != null ||
                 board.HasObstacle(destination, shape)) return false;

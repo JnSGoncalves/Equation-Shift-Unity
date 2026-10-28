@@ -129,7 +129,7 @@ public class GridMovementTests
     {
         Object.DestroyImmediate(root);
         root = null;
-        yield return SceneManager.LoadSceneAsync("00-FaseExemplo");
+        yield return SceneManager.LoadSceneAsync("00-FaseExemplo_1");
         yield return null;
         var sceneBoard = Object.FindFirstObjectByType<LevelGrid>();
         var scenePlayer = Object.FindFirstObjectByType<TopDownGridPlayer>();

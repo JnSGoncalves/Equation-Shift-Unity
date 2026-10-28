@@ -17,6 +17,8 @@ namespace EquationShift
         [SerializeField] private bool isWellFormed;
         [SerializeField] private bool isTrue;
         [SerializeField] private string error;
+        [SerializeField] private List<GridPushBlock> participatingBlocks;
+        [SerializeField] private TopDownGridPlayer participatingPlayer;
 
         public string Expression => expression;
         public Vector3Int StartCell => startCell;
@@ -24,12 +26,18 @@ namespace EquationShift
         public bool IsWellFormed => isWellFormed;
         public bool IsTrue => isTrue;
         public string Error => error;
+        public IReadOnlyList<GridPushBlock> ParticipatingBlocks => participatingBlocks;
+        public TopDownGridPlayer ParticipatingPlayer => participatingPlayer;
+        public bool Contains(GridPushBlock block) => block != null && participatingBlocks != null && participatingBlocks.Contains(block);
 
-        public EquationResult(string expression, Vector3Int startCell, EquationDirection direction)
+        public EquationResult(string expression, Vector3Int startCell, EquationDirection direction,
+            IEnumerable<GridPushBlock> blocks = null, TopDownGridPlayer player = null)
         {
             this.expression = expression;
             this.startCell = startCell;
             this.direction = direction;
+            participatingBlocks = blocks == null ? new List<GridPushBlock>() : new List<GridPushBlock>(blocks);
+            participatingPlayer = player;
             isWellFormed = EquationEvaluator.TryEvaluate(expression, out isTrue, out error);
         }
     }
@@ -39,6 +47,7 @@ namespace EquationShift
     {
         [SerializeField] private LevelGrid board;
         [SerializeField] private Transform blocksRoot;
+        [SerializeField] private TopDownGridPlayer player;
         [SerializeField] private bool validateAutomatically = true;
         [SerializeField] private bool logResultsOnChange;
         [SerializeField] private UnityEvent onEquationSatisfied = new UnityEvent();
@@ -52,13 +61,15 @@ namespace EquationShift
 
         private readonly List<GridPushBlock> blocks = new List<GridPushBlock>();
         private readonly List<BlockState> previousLayout = new List<BlockState>();
-        private readonly Dictionary<Vector3Int, GridPushBlock> cells = new Dictionary<Vector3Int, GridPushBlock>();
+        private readonly Dictionary<Vector3Int, EquationSymbol> cells = new Dictionary<Vector3Int, EquationSymbol>();
         private readonly List<Vector3Int> orderedCells = new List<Vector3Int>();
+        private PlayerState previousPlayerState;
         private bool hasValidated;
 
         public IReadOnlyList<EquationResult> Results => results;
         public bool HasTrueEquation => hasTrueEquation;
         public bool IsWaitingForBlocks => isWaitingForBlocks;
+        public bool IsWaitingForMovement => isWaitingForBlocks;
         public string ValidationError => validationError;
         public int BlockCount => blocks.Count;
         public bool AllEquationsTrue
@@ -73,10 +84,11 @@ namespace EquationShift
 
         public event Action<EquationValidator> ValidationChanged;
 
-        public void Configure(LevelGrid grid, Transform root = null)
+        public void Configure(LevelGrid grid, Transform root = null, TopDownGridPlayer equationPlayer = null)
         {
             board = grid;
             blocksRoot = root != null ? root : grid.transform;
+            player = equationPlayer;
             hasValidated = false;
         }
 
@@ -110,6 +122,7 @@ namespace EquationShift
             if (board == null) board = GetComponentInParent<LevelGrid>();
             if (board == null) return false;
             if (blocksRoot == null) blocksRoot = board.transform;
+            if (player == null) player = board.GetComponentInChildren<TopDownGridPlayer>();
             return true;
         }
 
@@ -117,6 +130,14 @@ namespace EquationShift
 
         private Vector3Int CellOf(GridPushBlock block) =>
             Application.isPlaying ? block.Cell : board.CellAt(block.transform.position);
+
+        private PlayerState CapturePlayerState()
+        {
+            if (player == null || !player.isActiveAndEnabled || !player.TryGetEquationSymbol(out char symbol))
+                return default;
+            Vector3Int cell = Application.isPlaying ? player.Cell : board.CellAt(player.transform.position);
+            return new PlayerState(player, cell, symbol, player.IsMoving);
+        }
 
         private bool LayoutChanged()
         {
@@ -126,9 +147,12 @@ namespace EquationShift
                 GridPushBlock block = blocks[i];
                 BlockState old = previousLayout[i];
                 if (old.Block != block || old.Cell != CellOf(block) ||
-                    old.Value != block.Value || old.IsMoving != block.IsMoving) return true;
+                    old.Value != block.Value || old.IsMoving != block.IsMoving ||
+                    old.IsAncor != block.IsAncor || old.AncorSide != block.AncorSide) return true;
             }
-            return false;
+            PlayerState current = CapturePlayerState();
+            return previousPlayerState.Player != current.Player || previousPlayerState.Cell != current.Cell ||
+                previousPlayerState.Value != current.Value || previousPlayerState.IsMoving != current.IsMoving;
         }
 
         private void ValidateCurrentLayout()
@@ -147,10 +171,23 @@ namespace EquationShift
                 previousLayout.Add(new BlockState(block, cell));
                 isWaitingForBlocks |= block.IsMoving;
                 if (cells.ContainsKey(cell)) validationError = "Mais de um bloco na celula " + cell + ".";
-                else { cells.Add(cell, block); orderedCells.Add(cell); }
+                else { cells.Add(cell, new EquationSymbol(block.Value, block)); orderedCells.Add(cell); }
             }
 
-            // During a step, the origin and destination belong to the same moving block.
+            previousPlayerState = CapturePlayerState();
+            if (previousPlayerState.Player != null)
+            {
+                Vector3Int cell = previousPlayerState.Cell;
+                isWaitingForBlocks |= previousPlayerState.IsMoving;
+                if (cells.ContainsKey(cell)) validationError = "Player e bloco na mesma celula " + cell + ".";
+                else
+                {
+                    cells.Add(cell, new EquationSymbol(previousPlayerState.Value, null, previousPlayerState.Player));
+                    orderedCells.Add(cell);
+                }
+            }
+
+            // During a step, the origin and destination belong to the same moving actor.
             // Never announce a solution assembled from intermediate positions.
             if (isWaitingForBlocks || !string.IsNullOrEmpty(validationError))
             {
@@ -174,18 +211,22 @@ namespace EquationShift
         {
             if (cells.ContainsKey(start - step)) return;
             var expression = new StringBuilder();
+            var participants = new List<GridPushBlock>();
+            TopDownGridPlayer participatingPlayer = null;
             Vector3Int current = start;
             bool hasEquals = false;
-            while (cells.TryGetValue(current, out GridPushBlock block))
+            while (cells.TryGetValue(current, out EquationSymbol symbol))
             {
-                expression.Append(block.Value);
-                hasEquals |= block.Value == '=';
+                expression.Append(symbol.Value);
+                if (symbol.Block != null) participants.Add(symbol.Block);
+                if (symbol.Player != null) participatingPlayer = symbol.Player;
+                hasEquals |= symbol.Value == '=';
                 current += step;
             }
 
             // An isolated '=' has no equation on its perpendicular axis.
             if (hasEquals && expression.Length > 1)
-                results.Add(new EquationResult(expression.ToString(), start, direction));
+                results.Add(new EquationResult(expression.ToString(), start, direction, participants, participatingPlayer));
         }
 
         private void PublishResult(bool anyTrue)
@@ -204,12 +245,44 @@ namespace EquationShift
             else if (wasTrue && !anyTrue) onEquationInvalidated.Invoke();
         }
 
+        private readonly struct EquationSymbol
+        {
+            public readonly char Value;
+            public readonly GridPushBlock Block;
+            public readonly TopDownGridPlayer Player;
+
+            public EquationSymbol(char value, GridPushBlock block, TopDownGridPlayer player = null)
+            {
+                Value = value;
+                Block = block;
+                Player = player;
+            }
+        }
+
+        private readonly struct PlayerState
+        {
+            public readonly TopDownGridPlayer Player;
+            public readonly Vector3Int Cell;
+            public readonly char Value;
+            public readonly bool IsMoving;
+
+            public PlayerState(TopDownGridPlayer player, Vector3Int cell, char value, bool isMoving)
+            {
+                Player = player;
+                Cell = cell;
+                Value = value;
+                IsMoving = isMoving;
+            }
+        }
+
         private readonly struct BlockState
         {
             public readonly GridPushBlock Block;
             public readonly Vector3Int Cell;
             public readonly char Value;
             public readonly bool IsMoving;
+            public readonly bool IsAncor;
+            public readonly AncorSide AncorSide;
 
             public BlockState(GridPushBlock block, Vector3Int cell)
             {
@@ -217,6 +290,8 @@ namespace EquationShift
                 Cell = cell;
                 Value = block.Value;
                 IsMoving = block.IsMoving;
+                IsAncor = block.IsAncor;
+                AncorSide = block.AncorSide;
             }
         }
     }

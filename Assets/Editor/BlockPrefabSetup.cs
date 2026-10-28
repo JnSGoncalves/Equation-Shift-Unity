@@ -97,6 +97,15 @@ public static class BlockPrefabSetup
     {
         GameObject actor = entry.Actor;
         string sceneName = actor.name;
+        var oldBlock = actor.GetComponent<GridPushBlock>();
+        bool sceneAncor = oldBlock != null && oldBlock.IsAncor;
+        AncorSide sceneSide = oldBlock != null ? oldBlock.AncorSide : AncorSide.T;
+        Match ancorSuffix = Regex.Match(sceneName, @"_Ancor_([TDLR])(?:\s+\(\d+\))?$", RegexOptions.IgnoreCase);
+        if (ancorSuffix.Success)
+        {
+            sceneAncor = true;
+            sceneSide = (AncorSide)Enum.Parse(typeof(AncorSide), ancorSuffix.Groups[1].Value.ToUpperInvariant());
+        }
         Vector3 scenePosition = actor.transform.position;
         Vector2 center = board.CenterOf(board.CellAt(scenePosition));
         scenePosition.x = center.x;
@@ -142,6 +151,8 @@ public static class BlockPrefabSetup
         actor.name = entry.PrefabName;
         actor.transform.localPosition = Vector3.zero;
         block.Configure(null);
+        block.IsAncor = false;
+        block.AncorSide = AncorSide.T;
         try
         {
             GameObject prefab = PrefabUtility.SaveAsPrefabAssetAndConnect(actor, entry.AssetPath, InteractionMode.AutomatedAction);
@@ -153,6 +164,14 @@ public static class BlockPrefabSetup
             actor.name = sceneName;
             actor.transform.position = scenePosition;
             block.Configure(board);
+            block.IsAncor = sceneAncor;
+            block.AncorSide = sceneSide;
+            if (sceneAncor)
+            {
+                block.IsMovable = false;
+                body.bodyType = RigidbodyType2D.Static;
+                PrefabUtility.RecordPrefabInstancePropertyModifications(body);
+            }
             PrefabUtility.RecordPrefabInstancePropertyModifications(actor);
             PrefabUtility.RecordPrefabInstancePropertyModifications(actor.transform);
             PrefabUtility.RecordPrefabInstancePropertyModifications(block);
@@ -162,6 +181,7 @@ public static class BlockPrefabSetup
     private static bool TryReadValue(string name, out char value, out string token)
     {
         string suffix = Regex.Replace(name.Trim(), @"\s+\(\d+\)$", "").Substring("block_".Length).ToLowerInvariant();
+        suffix = Regex.Replace(suffix, @"_ancor_[tdlr]$", "");
         if (suffix.Length == 1 && suffix[0] >= '0' && suffix[0] <= '9')
         {
             value = suffix[0];

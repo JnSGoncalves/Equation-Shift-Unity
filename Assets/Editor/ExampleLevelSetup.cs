@@ -9,7 +9,7 @@ public static class ExampleLevelSetup
     [MenuItem("Equation Shift/Configurar Fase Exemplo")]
     public static void Configure()
     {
-        var scene = EditorSceneManager.OpenScene("Assets/Scenes/00-FaseExemplo.unity");
+        var scene = EditorSceneManager.OpenScene("Assets/Scenes/00-FaseExemplo_1.unity");
         var ground = GameObject.Find("Ground").GetComponent<Tilemap>();
         var walls = GameObject.Find("Walls").GetComponent<Tilemap>();
         var gridObject = GameObject.Find("Grid");
@@ -46,7 +46,7 @@ public static class ExampleLevelSetup
         }
         var validator = blocksRoot.GetComponent<EquationValidator>();
         if (validator == null) validator = blocksRoot.AddComponent<EquationValidator>();
-        validator.Configure(board, blocksRoot.transform);
+        validator.Configure(board, blocksRoot.transform, controller);
         EditorSceneManager.MarkSceneDirty(scene);
         EditorSceneManager.SaveScene(scene);
         Debug.Log("Equation Shift: example level configured and saved.");

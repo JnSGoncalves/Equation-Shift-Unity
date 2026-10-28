@@ -65,6 +65,31 @@ public class EquationValidatorTests
         for (int i = 0; i < expression.Length; i++) AddBlock(expression[i], origin + direction * i);
     }
 
+    private TopDownGridPlayer AddPlayer(PlayerForm form, Vector3Int cell)
+    {
+        var actor = new GameObject("Player");
+        actor.SetActive(false);
+        // The player is a sibling of Blocks, as in the authored scene.
+        actor.transform.SetParent(root.transform, false);
+        actor.transform.position = board.CenterOf(cell);
+        actor.AddComponent<Rigidbody2D>().bodyType = RigidbodyType2D.Kinematic;
+        actor.AddComponent<BoxCollider2D>().size = Vector2.one * 0.9f;
+        var player = actor.AddComponent<TopDownGridPlayer>();
+        player.Configure(board);
+        actor.SetActive(true);
+        player.UnlockForm(form);
+        player.CurrentForm = form;
+        return player;
+    }
+
+    private TopDownGridPlayer AddPlayerEquation(string expression, int playerIndex, PlayerForm form,
+        Vector3Int direction)
+    {
+        for (int i = 0; i < expression.Length; i++)
+            if (i != playerIndex) AddBlock(expression[i], direction * i);
+        return AddPlayer(form, direction * playerIndex);
+    }
+
     [TestCase("12+3=15", true)]
     [TestCase("123+45=168", true)]
     [TestCase("2+3*4=14", true)]
@@ -196,12 +221,175 @@ public class EquationValidatorTests
         Assert.IsFalse(validator.HasTrueEquation);
     }
 
+    [TestCase(PlayerForm.Equal, "2=2", false)]
+    [TestCase(PlayerForm.Equal, "2=2", true)]
+    [TestCase(PlayerForm.Plus, "1+2=3", false)]
+    [TestCase(PlayerForm.Plus, "1+2=3", true)]
+    [TestCase(PlayerForm.Minus, "3-1=2", false)]
+    [TestCase(PlayerForm.Minus, "3-1=2", true)]
+    [TestCase(PlayerForm.Mult, "2*3=6", false)]
+    [TestCase(PlayerForm.Mult, "2*3=6", true)]
+    [TestCase(PlayerForm.Divis, "6/2=3", false)]
+    [TestCase(PlayerForm.Divis, "6/2=3", true)]
+    public void PlayerFormsParticipateInBothAxes(PlayerForm form, string expression, bool vertical)
+    {
+        var player = AddPlayerEquation(expression, 1, form, vertical ? Vector3Int.down : Vector3Int.right);
+        Assert.IsTrue(validator.ValidateEquations());
+        Assert.IsTrue(validator.AllEquationsTrue);
+        var result = validator.Results.Single();
+        Assert.AreEqual(expression, result.Expression);
+        Assert.AreEqual(vertical ? EquationDirection.Vertical : EquationDirection.Horizontal, result.Direction);
+        Assert.AreSame(player, result.ParticipatingPlayer);
+        Assert.AreEqual(expression.Length - 1, result.ParticipatingBlocks.Count);
+        Assert.AreEqual(expression.Length - 1, validator.BlockCount, "The player remains a separate actor");
+    }
+
+    [TestCase(PlayerForm.Plus, "1+2=4", 1, true)]
+    [TestCase(PlayerForm.Divis, "1/0=0", 1, false)]
+    [TestCase(PlayerForm.Equal, "1=1=1", 1, false)]
+    [TestCase(PlayerForm.Plus, "1=1+", 3, false)]
+    public void PlayerEquationsUseTheSameArithmeticAndWholeLineRules(PlayerForm form, string expression,
+        int playerIndex, bool wellFormed)
+    {
+        var player = AddPlayerEquation(expression, playerIndex, form, Vector3Int.right);
+        Assert.IsFalse(validator.ValidateEquations());
+        Assert.AreEqual(expression, validator.Results.Single().Expression);
+        Assert.AreEqual(wellFormed, validator.Results.Single().IsWellFormed);
+        Assert.AreSame(player, validator.Results.Single().ParticipatingPlayer);
+    }
+
+    [Test]
+    public void PlayerCanStartAnEquationWithUnaryMinus()
+    {
+        var player = AddPlayerEquation("-1=-1", 0, PlayerForm.Minus, Vector3Int.right);
+        Assert.IsTrue(validator.ValidateEquations());
+        Assert.AreEqual(Vector3Int.zero, validator.Results.Single().StartCell);
+        Assert.AreSame(player, validator.Results.Single().ParticipatingPlayer);
+    }
+
+    [TestCase(2, 0)]
+    [TestCase(1, -1)]
+    public void PlayerDoesNotJoinGappedOrDiagonalBlocks(int distance, int verticalOffset)
+    {
+        AddBlock('1', new Vector3Int(-distance, verticalOffset, 0));
+        AddBlock('1', new Vector3Int(distance, verticalOffset, 0));
+        AddPlayer(PlayerForm.Equal, Vector3Int.zero);
+        Assert.IsFalse(validator.ValidateEquations());
+        Assert.IsEmpty(validator.Results);
+    }
+
+    [Test]
+    public void PlayerCanCompleteTwoCrossingEquations()
+    {
+        AddBlock('1', Vector3Int.left);
+        AddBlock('1', Vector3Int.right);
+        AddBlock('2', Vector3Int.up);
+        AddBlock('2', Vector3Int.down);
+        var player = AddPlayer(PlayerForm.Equal, Vector3Int.zero);
+        Assert.IsTrue(validator.ValidateEquations());
+        Assert.IsTrue(validator.AllEquationsTrue);
+        Assert.AreEqual(2, validator.Results.Count);
+        CollectionAssert.AreEquivalent(new[] { "1=1", "2=2" }, validator.Results.Select(r => r.Expression));
+        Assert.IsTrue(validator.Results.All(r => r.ParticipatingPlayer == player));
+    }
+
+    [Test]
+    public void PlayerOverlappingABlockRejectsTheLayout()
+    {
+        AddEquation("1=1", Vector3Int.zero, Vector3Int.right);
+        AddPlayer(PlayerForm.Plus, Vector3Int.zero);
+        Assert.IsFalse(validator.ValidateEquations());
+        Assert.IsNotEmpty(validator.ValidationError);
+        Assert.IsEmpty(validator.Results);
+    }
+
+    [UnityTest]
+    public IEnumerator FormChangesAutomaticallyRevalidateAndDefaultDoesNotFillAGap()
+    {
+        var player = AddPlayerEquation("1=1", 1, PlayerForm.Default, Vector3Int.right);
+        Assert.IsFalse(validator.ValidateEquations());
+        Assert.IsEmpty(validator.Results);
+        player.UnlockForm(PlayerForm.Equal);
+        player.UnlockForm(PlayerForm.Plus);
+        player.CurrentForm = PlayerForm.Equal;
+        yield return null;
+        yield return null;
+        Assert.IsTrue(validator.HasTrueEquation);
+        player.CurrentForm = PlayerForm.Plus;
+        yield return null;
+        yield return null;
+        Assert.IsFalse(validator.HasTrueEquation);
+        Assert.IsEmpty(validator.Results);
+        player.CurrentForm = PlayerForm.Equal;
+        yield return null;
+        yield return null;
+        Assert.IsTrue(validator.HasTrueEquation);
+        player.CurrentForm = PlayerForm.Default;
+        yield return null;
+        yield return null;
+        Assert.IsFalse(validator.HasTrueEquation);
+        Assert.IsEmpty(validator.Results);
+    }
+
+    [UnityTest]
+    public IEnumerator PlayerEnteringAndLeavingAnEquationRevalidatesOnlyAfterTheStep()
+    {
+        AddBlock('1', Vector3Int.zero);
+        AddBlock('1', Vector3Int.right * 2);
+        var player = AddPlayer(PlayerForm.Equal, new Vector3Int(1, 1, 0));
+        Physics2D.SyncTransforms();
+        Assert.IsFalse(validator.ValidateEquations());
+        Assert.IsTrue(player.TryMove(Vector2Int.down));
+        Assert.IsFalse(validator.ValidateEquations());
+        Assert.IsTrue(validator.IsWaitingForMovement);
+        Assert.IsEmpty(validator.Results);
+        yield return new WaitForSeconds(0.3f);
+        Assert.IsTrue(validator.HasTrueEquation);
+        Assert.IsFalse(validator.IsWaitingForMovement);
+        Assert.AreEqual("1=1", validator.Results.Single().Expression);
+        Assert.IsTrue(player.TryMove(Vector2Int.up));
+        Assert.IsFalse(validator.ValidateEquations());
+        Assert.IsTrue(validator.IsWaitingForMovement);
+        yield return new WaitForSeconds(0.3f);
+        Assert.IsFalse(validator.HasTrueEquation);
+        Assert.IsFalse(validator.IsWaitingForMovement);
+        Assert.IsEmpty(validator.Results);
+    }
+
+    [UnityTest]
+    public IEnumerator DisablingAndRemovingPlayerAutomaticallyRevalidates()
+    {
+        var player = AddPlayerEquation("1=1", 1, PlayerForm.Equal, Vector3Int.right);
+        Assert.IsTrue(validator.ValidateEquations());
+        player.enabled = false;
+        yield return null;
+        yield return null;
+        Assert.IsFalse(validator.HasTrueEquation);
+        player.enabled = true;
+        yield return null;
+        yield return null;
+        Assert.IsTrue(validator.HasTrueEquation);
+        player.gameObject.SetActive(false);
+        yield return null;
+        yield return null;
+        Assert.IsFalse(validator.HasTrueEquation);
+        player.gameObject.SetActive(true);
+        yield return null;
+        yield return null;
+        Assert.IsTrue(validator.HasTrueEquation);
+        Object.Destroy(player.gameObject);
+        yield return null;
+        yield return null;
+        Assert.IsFalse(validator.HasTrueEquation);
+        Assert.IsEmpty(validator.Results);
+    }
+
     [UnityTest]
     public IEnumerator ExampleSceneUsesStoredSymbolsAndTheBlocksParent()
     {
         Object.DestroyImmediate(root);
         root = null;
-        yield return SceneManager.LoadSceneAsync("00-FaseExemplo");
+        yield return SceneManager.LoadSceneAsync("00-FaseExemplo_1");
         yield return null;
         var sceneValidator = Object.FindFirstObjectByType<EquationValidator>();
         Assert.IsNotNull(sceneValidator);
@@ -216,7 +404,7 @@ public class EquationValidatorTests
             string groupName = movable ? "MovableBlocks" : "StaticBlocks";
             var group = sceneValidator.transform.Find(groupName);
             Assert.IsNotNull(group, groupName + " belongs under the shared Blocks parent");
-            var groupBlocks = group.GetComponentsInChildren<GridPushBlock>();
+            var groupBlocks = group.GetComponentsInChildren<GridPushBlock>().Where(b => !b.IsAncor).ToArray();
             Assert.AreEqual(15, groupBlocks.Length, groupName + " contains every supported symbol");
             CollectionAssert.AreEquivalent("0123456789+-*/=".ToCharArray(), groupBlocks.Select(b => b.Value));
             Assert.IsTrue(groupBlocks.All(b => b.IsMovable == movable));
