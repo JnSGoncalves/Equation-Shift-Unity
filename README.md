@@ -68,6 +68,8 @@ No grid padrão de células `1 × 1`, com origem XY em zero, os centros são pos
 
 O jogo ajusta Player e blocos ao centro da célula quando a fase começa. Posicioná-los corretamente no editor evita que sejam ajustados para uma célula diferente da pretendida.
 
+Durante o jogo, **R** restaura os blocos às posições iniciais da sala, permitindo recuperar blocos presos nas extremidades. O personagem volta à entrada por onde chegou da última sala; na primeira sala, usa a posição inicial da cena. Se o portão dessa entrada estiver fechado, ele abre para receber o personagem e volta a fechar após sua saída. As habilidades coletadas e a forma selecionada permanecem disponíveis, inclusive as trazidas de outras salas. O reset funciona automaticamente em cenas com `TopDownGridPlayer`, sem configurar outro componente.
+
 ## 4. Editando o cenário com Tilemaps
 
 Selecione o Tilemap correto na hierarquia e use a **Tile Palette** para pintar ou apagar as células.
@@ -238,7 +240,7 @@ Use estas direções:
 
 Para ligar `G2` a `1A`, coloque destino `1A` na saída de `G2` e destino `G2` na saída de `1A`. **O pareamento usa somente o destino de retorno.** Os nomes dos objetos não precisam ser iguais e não existe `Connection Id`.
 
-Mantenha uma única saída ativa para cada destino dentro de uma sala. Se não houver uma contraparte única, ou a chegada estiver bloqueada por outros obstáculos, o jogo procura uma célula livre perto do centro. Essa alternativa evita uma chegada presa, mas a conexão correta deve ser testada junto ao portal.
+Mantenha uma única saída ativa para cada destino dentro de uma sala. A chegada usa a célula indicada por Spawn Direction mesmo sem portão ou com um trigger sobreposto. Se não houver uma contraparte única, ou essa célula estiver sem chão ou sobre uma parede, o jogo procura uma célula livre perto do centro. Essa alternativa evita uma chegada presa, mas a conexão correta deve ser testada junto ao portal.
 
 ### Alinhar as saídas entre salas
 
@@ -332,7 +334,7 @@ Salve o trabalho antes de usar um desses comandos e confira seu alcance. Na edi�
 | O Player ou um bloco não anda. | Chão em `Ground`, parede em `Walls`, outros colliders sólidos, célula ocupada, âncora ou bloco fixo. |
 | O portão abriu, mas a passagem continua bloqueada. | Tiles de parede atrás dele, falta de chão e colliders extras no corredor. |
 | A saída não troca de sala. | Código do destino, nome do arquivo, cena habilitada no Build, códigos duplicados e trigger do portal. O Player precisa terminar o passo na célula do portal. |
-| O Player aparece no centro da sala. | Contraparte ausente ou duplicada; destino de retorno errado; chegada sem chão ou obstruída. |
+| O Player aparece no centro da sala. | Contraparte ausente ou duplicada; destino de retorno errado; chegada sem chão ou sobre uma parede. |
 | A câmera desliza de forma desalinhada. | Mesma linha/coluna das saídas, `Spawn Direction`, origem e escala dos grids e enquadramento das câmeras. |
 | A transição tem problemas de iluminação ou câmera. | `RoomScene` no Grid, uma câmera principal configurada por sala e duplicação indevida de componentes. |
 | Uma transformação não fica disponível. | Coleta da habilidade; ao iniciar diretamente em Play, o Player começa sem as formas das salas anteriores. |

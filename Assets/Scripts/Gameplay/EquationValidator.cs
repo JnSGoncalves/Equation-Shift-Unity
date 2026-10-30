@@ -217,9 +217,19 @@ namespace EquationShift
             bool hasEquals = false;
             while (cells.TryGetValue(current, out EquationSymbol symbol))
             {
-                expression.Append(symbol.Value);
-                if (symbol.Block != null) participants.Add(symbol.Block);
-                if (symbol.Player != null) participatingPlayer = symbol.Player;
+                if (direction == EquationDirection.Vertical && IsDigit(symbol.Value))
+                {
+                    // A vertical operand can span several columns, read left to right.
+                    Vector3Int digitCell = current;
+                    while (cells.TryGetValue(digitCell + Vector3Int.left, out EquationSymbol left) && IsDigit(left.Value))
+                        digitCell += Vector3Int.left;
+                    while (cells.TryGetValue(digitCell, out EquationSymbol digit) && IsDigit(digit.Value))
+                    {
+                        AppendSymbol(digit, expression, participants, ref participatingPlayer);
+                        digitCell += Vector3Int.right;
+                    }
+                }
+                else AppendSymbol(symbol, expression, participants, ref participatingPlayer);
                 hasEquals |= symbol.Value == '=';
                 current += step;
             }
@@ -227,6 +237,16 @@ namespace EquationShift
             // An isolated '=' has no equation on its perpendicular axis.
             if (hasEquals && expression.Length > 1)
                 results.Add(new EquationResult(expression.ToString(), start, direction, participants, participatingPlayer));
+        }
+
+        private static bool IsDigit(char value) => value >= '0' && value <= '9';
+
+        private static void AppendSymbol(EquationSymbol symbol, StringBuilder expression,
+            List<GridPushBlock> participants, ref TopDownGridPlayer participatingPlayer)
+        {
+            expression.Append(symbol.Value);
+            if (symbol.Block != null) participants.Add(symbol.Block);
+            if (symbol.Player != null) participatingPlayer = symbol.Player;
         }
 
         private void PublishResult(bool anyTrue)

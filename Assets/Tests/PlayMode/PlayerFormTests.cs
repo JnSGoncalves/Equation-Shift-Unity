@@ -153,6 +153,38 @@ public class PlayerFormTests
     }
 
     [UnityTest]
+    public IEnumerator RResetsTheRoomWithoutLosingUnlockedForms()
+    {
+        inputSettings = InputSystem.settings;
+        previousBackgroundBehavior = inputSettings.backgroundBehavior;
+        previousEditorInputBehavior = inputSettings.editorInputBehaviorInPlayMode;
+        inputSettings.backgroundBehavior = InputSettings.BackgroundBehavior.IgnoreFocus;
+        inputSettings.editorInputBehaviorInPlayMode =
+            InputSettings.EditorInputBehaviorInPlayMode.AllDeviceInputAlwaysGoesToGameView;
+        keyboard = InputSystem.AddDevice<Keyboard>();
+        Vector3Int initial = player.Cell;
+        Assert.IsTrue(SceneTransition.TryFindSafeCenter(player, out Vector3Int other));
+        if (other == initial)
+        {
+            other = initial + Vector3Int.down;
+            if (!player.CanStandAt(other)) other = initial + Vector3Int.up;
+        }
+        Assert.AreNotEqual(initial, other);
+        Assert.IsTrue(player.TeleportToCell(other));
+        player.UnlockForm(PlayerForm.Plus);
+        player.CurrentForm = PlayerForm.Plus;
+
+        InputSystem.QueueStateEvent(keyboard, new KeyboardState(Key.R));
+        yield return null;
+
+        Assert.AreEqual(initial, player.Cell);
+        Assert.IsTrue(player.IsFormUnlocked(PlayerForm.Plus));
+        Assert.AreEqual(PlayerForm.Plus, player.CurrentForm);
+        InputSystem.QueueStateEvent(keyboard, new KeyboardState());
+        yield return null;
+    }
+
+    [UnityTest]
     public IEnumerator TabCyclesOncePerPressAndWrapsToDefault()
     {
         // Batch tests have no focused Game View; route the simulated keyboard to the player.

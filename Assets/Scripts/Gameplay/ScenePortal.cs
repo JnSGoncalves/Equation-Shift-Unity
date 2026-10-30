@@ -58,7 +58,7 @@ namespace EquationShift
             bool wasOpen = gate != null && gate.IsOpen;
             if (gate != null) gate.SetOpen(true, false);
             Physics2D.SyncTransforms();
-            if (SceneTransition.IsSafeArrival(player, ArrivalCell) && player.TeleportToCell(ArrivalCell))
+            if (player.TeleportToArrivalCell(ArrivalCell))
             {
                 if (gate != null) gate.OpenForArrival(player);
                 return true;

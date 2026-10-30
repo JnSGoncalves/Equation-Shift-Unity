@@ -241,7 +241,8 @@ namespace EquationShift
             // Both camera and room change coordinates in this frame, preserving the final image.
             foreach (GameObject root in sourceScene.GetRootGameObjects()) root.SetActive(false);
             destination.SetOffset(Vector3.zero);
-            destinationPlayer.TeleportToCell(arrivalCell);
+            destinationPlayer.TeleportToArrivalCell(arrivalCell);
+            destinationPlayer.RememberRoomEntrance(received ? counterpart : null);
             SceneManager.SetActiveScene(scene);
             destination.Resume();
             foreach (Renderer renderer in hiddenPlayers)
