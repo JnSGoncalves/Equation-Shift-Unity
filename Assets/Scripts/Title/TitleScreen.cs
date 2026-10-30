@@ -13,7 +13,7 @@ namespace EquationShift
         [SerializeField] private Vector2 diagonalVelocity = new Vector2(0.65f, 0.95f);
         [SerializeField] private CanvasGroup prompt;
         [SerializeField] private CanvasGroup fade;
-        [SerializeField] private string firstLevel = "Assets/Scenes/00-FaseExemplo_1.unity";
+        [SerializeField] private string firstLevel = "Assets/Scenes/G2-Fase_2.unity";
 
         private bool starting;
         private float age;

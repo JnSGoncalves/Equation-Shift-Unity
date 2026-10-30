@@ -1302,7 +1302,7 @@ MonoBehaviour:
   diagonalVelocity: {x: 0.65, y: 0.95}
   prompt: {fileID: 650356481}
   fade: {fileID: 1031703268}
-  firstLevel: Assets/Scenes/00-FaseExemplo_1.unity
+  firstLevel: Assets/Scenes/G2-Fase_2.unity
 --- !u!4 &305249761
 Transform:
   m_ObjectHideFlags: 0
