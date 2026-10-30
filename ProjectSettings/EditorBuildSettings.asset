@@ -17,6 +17,12 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/G3-Fase_3.unity
     guid: 3a65ec4bb30f636498b40fde5baa5c4c
+  - enabled: 1
+    path: Assets/Scenes/G5-Fase_5.unity
+    guid: e4361229ba2fdf948bfcc235c7233a09
+  - enabled: 1
+    path: Assets/Scenes/G4-Fase_4.unity
+    guid: 57bdf746f682b084b855f1485ce7bd02
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
