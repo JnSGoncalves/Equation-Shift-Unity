@@ -1,5 +1,5 @@
 {
   "name": "EquationShift.PlayModeTests",
-  "references": ["EquationShift.Gameplay", "Unity.InputSystem"],
+  "references": ["EquationShift.Gameplay", "Unity.InputSystem", "UnityEngine.UI"],
   "optionalUnityReferences": ["TestAssemblies"]
 }

@@ -84,6 +84,52 @@ public class GridMovementTests
         Assert.IsFalse(player.IsMoving);
     }
 
+    [UnityTest]
+    public IEnumerator ResetRestoresBlocksAndPlayerAndCancelsAnUnfinishedPush()
+    {
+        player.UnlockForm(PlayerForm.Equal);
+        player.UnlockForm(PlayerForm.Mult);
+        player.CurrentForm = PlayerForm.Mult;
+        Assert.IsTrue(player.TryMove(Vector2Int.down));
+        yield return new WaitForSeconds(0.3f);
+        Assert.AreEqual(Vector3Int.down, block.Cell);
+        Assert.IsTrue(player.TryMove(Vector2Int.down));
+        block.Value = '9';
+
+        Assert.IsTrue(player.TryResetLevel());
+        Assert.AreEqual(Vector3Int.zero, block.Cell);
+        Assert.AreEqual('0', block.Value);
+        Assert.AreEqual(Vector3Int.up, player.Cell);
+        Assert.IsFalse(player.IsMoving);
+        Assert.IsFalse(block.IsMoving);
+        Assert.IsTrue(player.IsFormUnlocked(PlayerForm.Equal));
+        Assert.IsTrue(player.IsFormUnlocked(PlayerForm.Mult));
+        Assert.AreEqual(PlayerForm.Mult, player.CurrentForm);
+
+        yield return new WaitForSeconds(0.3f);
+
+        Assert.AreEqual(Vector3Int.zero, block.Cell, "An old physics step must not resume after reset.");
+        Assert.AreEqual(Vector3Int.up, player.Cell);
+        Assert.That(Vector2.Distance(block.GetComponent<Rigidbody2D>().position,
+            board.CenterOf(Vector3Int.zero)), Is.LessThan(0.001f));
+        Assert.IsTrue(player.TryMove(Vector2Int.down), "The restored block can be pushed again.");
+    }
+
+    [UnityTest]
+    public IEnumerator ResetIsIgnoredWhileMovementIsLocked()
+    {
+        Assert.IsTrue(player.TryMove(Vector2Int.down));
+        yield return new WaitForSeconds(0.3f);
+        var owner = new object();
+        player.LockMovement(owner);
+        Assert.IsFalse(player.TryResetLevel());
+        Assert.AreEqual(Vector3Int.down, block.Cell);
+        Assert.AreEqual(Vector3Int.zero, player.Cell);
+        player.UnlockMovement(owner);
+        Assert.IsTrue(player.TryResetLevel());
+        Assert.AreEqual(Vector3Int.zero, block.Cell);
+    }
+
     [Test]
     public void MissingFloorRejectsPush()
     {

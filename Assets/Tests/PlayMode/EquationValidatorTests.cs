@@ -150,6 +150,71 @@ public class EquationValidatorTests
     }
 
     [Test]
+    public void VerticalResultIncludesTheDigitToTheLeftOfTheColumn()
+    {
+        AddEquation("=3", Vector3Int.zero, Vector3Int.down);
+        var tens = AddBlock('1', new Vector3Int(-1, -1, 0));
+
+        Assert.IsFalse(validator.ValidateEquations());
+        var result = validator.Results.Single();
+        Assert.AreEqual("=13", result.Expression);
+        Assert.IsFalse(result.IsWellFormed, "The left side is still required.");
+        Assert.IsTrue(result.Contains(tens));
+        Assert.AreEqual(3, result.ParticipatingBlocks.Count);
+    }
+
+    [TestCase(-1)]
+    [TestCase(0)]
+    public void VerticalOperandsJoinHorizontalDigitsOnEitherSideOfTheColumn(int leftColumn)
+    {
+        AddEquation("13", new Vector3Int(leftColumn, 1, 0), Vector3Int.right);
+        var player = AddPlayer(PlayerForm.Equal, Vector3Int.zero);
+        AddEquation("13", new Vector3Int(leftColumn, -1, 0), Vector3Int.right);
+
+        Assert.IsTrue(validator.ValidateEquations());
+        Assert.IsTrue(validator.AllEquationsTrue);
+        var result = validator.Results.Single();
+        Assert.AreEqual("13=13", result.Expression);
+        Assert.AreEqual(EquationDirection.Vertical, result.Direction);
+        Assert.AreSame(player, result.ParticipatingPlayer);
+        Assert.AreEqual(4, result.ParticipatingBlocks.Count);
+        Assert.IsTrue(blocksRoot.GetComponentsInChildren<GridPushBlock>().All(result.Contains));
+    }
+
+    [Test]
+    public void VerticalNumbersStopAtGapsAndHorizontalOperators()
+    {
+        AddEquation("3=3", Vector3Int.up, Vector3Int.down);
+        AddBlock('1', new Vector3Int(-2, -1, 0));
+        AddBlock('+', new Vector3Int(1, -1, 0));
+        AddBlock('9', new Vector3Int(2, -1, 0));
+
+        Assert.IsTrue(validator.ValidateEquations());
+        var result = validator.Results.Single();
+        Assert.AreEqual("3=3", result.Expression);
+        Assert.AreEqual(3, result.ParticipatingBlocks.Count);
+    }
+
+    [UnityTest]
+    public IEnumerator MovingDigitBesideVerticalResultAutomaticallyJoinsTheNumber()
+    {
+        AddEquation("9+4=3", new Vector3Int(0, 3, 0), Vector3Int.down);
+        var tens = AddBlock('1', new Vector3Int(-1, -2, 0));
+        Physics2D.SyncTransforms();
+        Assert.IsFalse(validator.ValidateEquations());
+        Assert.IsTrue(tens.TryMove(Vector2Int.up));
+        Assert.IsFalse(validator.ValidateEquations());
+        Assert.IsTrue(validator.IsWaitingForMovement);
+
+        yield return new WaitForSeconds(0.3f);
+
+        Assert.IsTrue(validator.HasTrueEquation);
+        var result = validator.Results.Single();
+        Assert.AreEqual("9+4=13", result.Expression);
+        Assert.IsTrue(result.Contains(tens));
+    }
+
+    [Test]
     public void GapsSplitEquationsInsteadOfJoiningDistantBlocks()
     {
         AddEquation("1+", Vector3Int.zero, Vector3Int.right);

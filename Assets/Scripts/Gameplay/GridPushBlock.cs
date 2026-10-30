@@ -22,6 +22,11 @@ namespace EquationShift
         private Vector3Int targetCell;
         private Vector2 start;
         private float elapsed;
+        private Vector3Int initialCell;
+        private char initialValue;
+        private bool initiallyMovable;
+        private bool initiallyAncor;
+        private AncorSide initialAncorSide;
 
         public bool IsMoving { get; private set; }
         public bool IsMovable { get => isMovable; set => isMovable = value; }
@@ -46,6 +51,27 @@ namespace EquationShift
             }
             cell = board.CellAt(transform.position);
             body.position = board.CenterOf(cell);
+            initialCell = cell;
+            initialValue = value;
+            initiallyMovable = isMovable;
+            initiallyAncor = isAncor;
+            initialAncorSide = ancorSide;
+        }
+
+        internal void ResetToInitialState()
+        {
+            if (body == null || board == null) return;
+            cell = targetCell = initialCell;
+            start = board.CenterOf(cell);
+            elapsed = 0f;
+            IsMoving = false;
+            value = initialValue;
+            isMovable = initiallyMovable;
+            isAncor = initiallyAncor;
+            ancorSide = initialAncorSide;
+            body.linearVelocity = Vector2.zero;
+            body.position = start;
+            transform.position = new Vector3(start.x, start.y, transform.position.z);
         }
 
         public bool Occupies(Vector3Int position) =>

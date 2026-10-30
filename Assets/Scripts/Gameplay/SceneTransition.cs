@@ -15,14 +15,16 @@ namespace EquationShift
             if (IsTravelling || portal == null || player == null || !portal.isActiveAndEnabled ||
                 player.IsMoving || player.IsMovementLocked || player.Board != portal.Board ||
                 portal.gameObject.scene != player.gameObject.scene) return false;
-            if (!ScenePortal.TryGetSceneId(portal.gameObject.scene.name, out string sourceId) ||
-                !ScenePortal.TryResolveScene(portal.DestinationSceneId, out string destinationPath))
+            if (!ScenePortal.TryResolveScene(portal.DestinationSceneId, out string destinationPath))
             {
+                RoomUnavailableNotice.Show();
                 Debug.LogWarning("Passagem sem destino unico nas cenas habilitadas do Build: " +
                     portal.DestinationSceneId, portal);
                 return false;
             }
+            if (!ScenePortal.TryGetSceneId(portal.gameObject.scene.name, out string sourceId)) return false;
             if (portal.gameObject.scene.path == destinationPath) return false;
+            RoomUnavailableNotice.Hide();
             Controller = new GameObject("Room Transition").AddComponent<RoomTransitionController>();
             if (Controller.Begin(portal, player, sourceId, destinationPath)) return true;
             Object.Destroy(Controller.gameObject);

@@ -4,10 +4,11 @@ using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
+using UnityEngine.UI;
 
 public class SceneTransitionTests
 {
-    private enum ArrivalProblem { Disabled, Obstacle, WrongDestination, Duplicate }
+    private enum ArrivalProblem { Disabled, Obstacle, WrongDestination, Duplicate, NoGround, Wall, NoGate }
     private const string First = "00-FaseExemplo_1";
     private const string Second = "A0-FaseExemplo_2";
 
@@ -47,6 +48,54 @@ public class SceneTransitionTests
         Assert.AreEqual(name, SceneManager.GetActiveScene().name);
         Assert.IsFalse(SceneTransition.IsTravelling);
         yield return null;
+    }
+
+    [UnityTest]
+    public IEnumerator MissingRoomShowsNoticeInFirstRoom() => CheckMissingRoomNotice(First);
+
+    [UnityTest]
+    public IEnumerator MissingRoomShowsNoticeInSecondRoom() => CheckMissingRoomNotice(Second);
+
+    private static IEnumerator CheckMissingRoomNotice(string sceneName)
+    {
+        yield return SceneManager.LoadSceneAsync(sceneName);
+        yield return null;
+        var player = Object.FindFirstObjectByType<TopDownGridPlayer>();
+        var portal = Object.FindFirstObjectByType<ScenePortal>();
+        string originalDestination = portal.DestinationSceneId;
+        Vector3Int originalCell = player.Cell;
+        portal.Configure(player.Board, "ZZ", portal.SpawnDirection);
+        LogAssert.Expect(LogType.Warning, "Passagem sem destino unico nas cenas habilitadas do Build: ZZ");
+        Assert.IsFalse(SceneTransition.TryTravel(portal, player));
+
+        var notice = Object.FindFirstObjectByType<RoomUnavailableNotice>();
+        Assert.IsNotNull(notice);
+        Assert.IsTrue(notice.IsVisible);
+        var label = notice.GetComponentInChildren<Text>();
+        Assert.AreEqual("Opa, aparentemente essa sala ainda está sendo montada...", label.text);
+        Assert.IsNotNull(label.font);
+        Assert.AreEqual("Monocraft", label.font.name);
+        Assert.AreEqual(Color.black, notice.GetComponentInChildren<Image>().color);
+        Assert.AreEqual(RenderMode.ScreenSpaceOverlay, notice.GetComponentInChildren<Canvas>().renderMode);
+        Assert.IsFalse(label.raycastTarget);
+        Assert.IsFalse(player.IsMovementLocked);
+        Assert.IsFalse(SceneTransition.IsTravelling);
+        Assert.AreEqual(originalCell, player.Cell);
+        Assert.AreEqual(sceneName, SceneManager.GetActiveScene().name);
+
+        yield return new WaitForSecondsRealtime(5.1f);
+        Assert.IsFalse(notice.IsVisible, "The warning disappears without requiring player input.");
+
+        LogAssert.Expect(LogType.Warning, "Passagem sem destino unico nas cenas habilitadas do Build: ZZ");
+        Assert.IsFalse(SceneTransition.TryTravel(portal, player));
+        Assert.IsTrue(notice.IsVisible);
+        Assert.AreEqual(1, Object.FindObjectsByType<RoomUnavailableNotice>(FindObjectsSortMode.None).Length);
+
+        portal.Configure(player.Board, originalDestination, portal.SpawnDirection);
+        Assert.IsTrue(SceneTransition.TryTravel(portal, player));
+        Assert.IsFalse(notice.IsVisible, "A valid transition clears the previous warning.");
+        yield return WaitForRoom(sceneName == First ? Second : First);
+        Assert.IsNull(Object.FindFirstObjectByType<RoomUnavailableNotice>(), "The overlay belongs to the previous room.");
     }
 
     private static T InScene<T>(Scene scene) where T : Component
@@ -188,6 +237,54 @@ public class SceneTransitionTests
     }
 
     [UnityTest]
+    public IEnumerator ResetAfterTravellingKeepsAbilitiesFromPreviousRooms()
+    {
+        yield return SceneManager.LoadSceneAsync(First);
+        yield return null;
+        var player = Object.FindFirstObjectByType<TopDownGridPlayer>();
+        player.UnlockForm(PlayerForm.Equal);
+        player.UnlockForm(PlayerForm.Mult);
+        player.CurrentForm = PlayerForm.Mult;
+        Assert.IsTrue(SceneTransition.TryTravel(Object.FindFirstObjectByType<ScenePortal>(), player));
+        Assert.IsFalse(player.TryResetLevel(), "Reset cannot interrupt a room transition.");
+        yield return WaitForRoom(Second);
+
+        player = Object.FindFirstObjectByType<TopDownGridPlayer>();
+        var entrance = Object.FindFirstObjectByType<ScenePortal>();
+        Vector3Int arrival = player.Cell;
+        Assert.AreEqual(entrance.ArrivalCell, arrival);
+        Assert.IsTrue(player.TryMove(entrance.SpawnDirection));
+        yield return new WaitForSeconds(0.3f);
+        float resetDeadline = Time.realtimeSinceStartup + 5f;
+        while (player.IsMovementLocked && Time.realtimeSinceStartup < resetDeadline) yield return null;
+        Assert.AreNotEqual(arrival, player.Cell);
+        Assert.IsTrue(player.TryResetLevel());
+        Assert.AreEqual(arrival, player.Cell, "Reset returns to the entrance from the previous room.");
+        Assert.IsTrue(entrance.ArrivalGate.IsOpen);
+        Assert.IsTrue(entrance.ArrivalGate.IsWaitingForArrivalExit);
+        Assert.IsTrue(player.IsFormUnlocked(PlayerForm.Equal));
+        Assert.IsTrue(player.IsFormUnlocked(PlayerForm.Mult));
+        Assert.AreEqual(PlayerForm.Mult, player.CurrentForm);
+        player.UnlockForm(PlayerForm.Plus);
+        Assert.IsTrue(player.TryResetLevel());
+        Assert.IsTrue(player.IsFormUnlocked(PlayerForm.Plus), "Reset also preserves abilities collected in this room.");
+
+        // Leaving the arrival gate can queue its closing animation.
+        yield return new WaitForSecondsRealtime(2f);
+        Assert.IsTrue(SceneTransition.TryTravel(Object.FindFirstObjectByType<ScenePortal>(), player));
+        yield return WaitForRoom(First);
+        player = Object.FindFirstObjectByType<TopDownGridPlayer>();
+        Assert.IsTrue(player.IsFormUnlocked(PlayerForm.Equal));
+        Assert.IsTrue(player.IsFormUnlocked(PlayerForm.Mult));
+        Assert.IsTrue(player.IsFormUnlocked(PlayerForm.Plus));
+        Assert.AreEqual(PlayerForm.Mult, player.CurrentForm);
+        arrival = player.Cell;
+        Assert.AreEqual(Object.FindFirstObjectByType<ScenePortal>().ArrivalCell, arrival);
+        Assert.IsTrue(player.TryResetLevel());
+        Assert.AreEqual(arrival, player.Cell, "Returning to a room updates its reset entrance.");
+    }
+
+    [UnityTest]
     public IEnumerator ArrivalGateClosesOnlyAfterPlayerLeavesWithCameraFeedback()
     {
         yield return SceneManager.LoadSceneAsync(First);
@@ -278,7 +375,16 @@ public class SceneTransitionTests
     public IEnumerator MissingCounterpartUsesFreeCenter() => TravelWithUnavailableArrival(ArrivalProblem.Disabled);
 
     [UnityTest]
-    public IEnumerator ObstructedCounterpartUsesFreeCenter() => TravelWithUnavailableArrival(ArrivalProblem.Obstacle);
+    public IEnumerator ArrivalColliderDoesNotRedirectToCenter() => TravelWithUnavailableArrival(ArrivalProblem.Obstacle);
+
+    [UnityTest]
+    public IEnumerator EntranceWithoutGateStillUsesItsArrivalCell() => TravelWithUnavailableArrival(ArrivalProblem.NoGate);
+
+    [UnityTest]
+    public IEnumerator ArrivalWithoutGroundUsesFreeCenter() => TravelWithUnavailableArrival(ArrivalProblem.NoGround);
+
+    [UnityTest]
+    public IEnumerator ArrivalOnWallUsesFreeCenter() => TravelWithUnavailableArrival(ArrivalProblem.Wall);
 
     [UnityTest]
     public IEnumerator ExitToAnotherRoomIsNotCounterpart() => TravelWithUnavailableArrival(ArrivalProblem.WrongDestination);
@@ -292,10 +398,12 @@ public class SceneTransitionTests
         yield return null;
         var player = Object.FindFirstObjectByType<TopDownGridPlayer>();
         var exit = Object.FindFirstObjectByType<ScenePortal>();
+        Vector3Int expectedArrival = default;
         UnityEngine.Events.UnityAction<Scene, LoadSceneMode> prepareDestination = (scene, mode) =>
         {
             if (scene.name != Second) return;
             var entrance = InScene<ScenePortal>(scene);
+            expectedArrival = entrance.ArrivalCell;
             switch (problem)
             {
                 case ArrivalProblem.Disabled:
@@ -305,6 +413,21 @@ public class SceneTransitionTests
                     var obstacle = new GameObject("Obstructed arrival", typeof(BoxCollider2D));
                     obstacle.transform.SetParent(entrance.Board.transform, false);
                     obstacle.transform.position = entrance.Board.CenterOf(entrance.ArrivalCell);
+                    break;
+                case ArrivalProblem.NoGate:
+                    Object.DestroyImmediate(entrance.ArrivalGate.gameObject);
+                    // An oversized portal trigger may overlap the valid arrival tile.
+                    entrance.GetComponent<BoxCollider2D>().size = Vector2.one * 3f;
+                    break;
+                case ArrivalProblem.NoGround:
+                    entrance.Board.Ground.SetTile(entrance.ArrivalCell, null);
+                    break;
+                case ArrivalProblem.Wall:
+                    var ground = entrance.Board.Ground;
+                    var walls = entrance.Board.Walls;
+                    Vector3 world = ground.GetCellCenterWorld(entrance.ArrivalCell);
+                    world.z = walls.transform.position.z;
+                    walls.SetTile(walls.WorldToCell(world), ground.GetTile(entrance.ArrivalCell));
                     break;
                 case ArrivalProblem.WrongDestination:
                     entrance.Configure(entrance.Board, "4G", entrance.SpawnDirection, entrance.ArrivalGate);
@@ -324,6 +447,17 @@ public class SceneTransitionTests
             Assert.IsFalse(SceneTransition.TryTravel(exit, player), "Only one load can run at once");
             yield return WaitForRoom(Second);
             player = Object.FindFirstObjectByType<TopDownGridPlayer>();
+            if (problem == ArrivalProblem.NoGate || problem == ArrivalProblem.Obstacle)
+            {
+                Assert.AreEqual(expectedArrival, player.Cell);
+                Assert.IsFalse(player.IsMovementLocked);
+                yield return null;
+                Assert.IsFalse(SceneTransition.IsTravelling, "Overlapping a portal trigger must not send the player back.");
+                Assert.AreEqual(Second, SceneManager.GetActiveScene().name);
+                Assert.IsTrue(player.TryResetLevel());
+                Assert.AreEqual(expectedArrival, player.Cell, "Reset uses the same entrance rules.");
+                yield break;
+            }
             Assert.IsTrue(SceneTransition.TryFindSafeCenter(player, out Vector3Int center));
             Assert.AreEqual(center, player.Cell);
             Assert.IsTrue(player.CanStandAt(player.Cell));

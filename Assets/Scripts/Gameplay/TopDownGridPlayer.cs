@@ -35,6 +35,8 @@ namespace EquationShift
         private Rigidbody2D body;
         private Collider2D shape;
         private Vector3Int cell;
+        private Vector3Int initialCell;
+        private ScenePortal resetEntrance;
         private Vector3Int targetCell;
         private Vector2 start;
         private Vector2Int input;
@@ -62,12 +64,47 @@ namespace EquationShift
 
         public void Configure(LevelGrid grid) => board = grid;
 
+        internal void RememberRoomEntrance(ScenePortal entrance)
+        {
+            initialCell = cell;
+            resetEntrance = entrance;
+        }
+
+        public bool TryResetLevel()
+        {
+            if (board == null || IsMovementLocked || SceneTransition.IsTravelling) return false;
+            foreach (GridPushBlock block in board.GetComponentsInChildren<GridPushBlock>(true))
+                block.ResetToInitialState();
+            Physics2D.SyncTransforms();
+            bool restored = resetEntrance != null
+                ? resetEntrance.TryReceivePlayer(this)
+                : TeleportToCell(initialCell);
+            Physics2D.SyncTransforms();
+            foreach (EquationValidator validator in board.GetComponentsInChildren<EquationValidator>())
+                validator.ValidateEquations();
+            return restored;
+        }
+
         public bool CanStandAt(Vector3Int destination) => board != null && board.IsFloor(destination) &&
             board.BlockAt(destination) == null && !board.HasObstacle(destination, shape);
 
         public bool TeleportToCell(Vector3Int destination)
         {
             if (!CanStandAt(destination)) return false;
+            PlaceAtCell(destination);
+            return true;
+        }
+
+        internal bool TeleportToArrivalCell(Vector3Int destination)
+        {
+            // Room entrances are authored checkpoints; only terrain invalidates them.
+            if (board == null || !board.IsFloor(destination)) return false;
+            PlaceAtCell(destination);
+            return true;
+        }
+
+        private void PlaceAtCell(Vector3Int destination)
+        {
             cell = targetCell = destination;
             start = board.CenterOf(destination);
             IsMoving = false;
@@ -76,7 +113,6 @@ namespace EquationShift
             body.linearVelocity = Vector2.zero;
             body.position = start;
             transform.position = new Vector3(start.x, start.y, transform.position.z);
-            return true;
         }
 
         internal void RestoreForms(IReadOnlyList<PlayerForm> forms, PlayerForm selected)
@@ -154,6 +190,7 @@ namespace EquationShift
             shape = GetComponent<Collider2D>();
             if (board == null) board = GetComponentInParent<LevelGrid>();
             cell = board.CellAt(transform.position);
+            initialCell = cell;
             body.position = board.CenterOf(cell);
         }
 
@@ -166,6 +203,7 @@ namespace EquationShift
         private void Update()
         {
             Keyboard keyboard = Keyboard.current;
+            if (keyboard != null && keyboard.rKey.wasPressedThisFrame && TryResetLevel()) return;
             if (keyboard != null && keyboard.tabKey.wasPressedThisFrame) CycleForm();
             // Also reflect changes made to Current Form in the Inspector during Play Mode.
             ApplyFormAnimation();
