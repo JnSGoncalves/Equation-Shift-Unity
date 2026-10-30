@@ -4,6 +4,12 @@ Este guia explica como montar uma sala no Unity, criar suas contas e conectá-la
 
 Para consultar detalhes dos scripts e das animações, veja a [documentação de gameplay](Assets/Scripts/Gameplay/README.md).
 
+## Tela de título
+
+Abra `Assets/Scenes/Title.unity` e entre no Play Mode. A cena usa Monocraft, com o título centralizado e 54 instâncias decorativas dos prefabs de blocos subindo na diagonal em velocidades diferentes. Enter, Espaço, clique/toque ou o botão principal/Start do controle iniciam `00-FaseExemplo_1`, com uma breve transição para preto. A cena é a primeira da lista do Build.
+
+No objeto `Title Screen`, ajuste `Diagonal Velocity` para mudar a direção e a velocidade do fundo e `First Level` para escolher a fase inicial. Os blocos são apenas decorativos nessa cena: seus componentes de física e de tabuleiro foram removidos nas instâncias, preservando os prefabs originais. Para reconstruir o layout padrão, use **Equation Shift > Criar cena de titulo**; isso substitui a cena de título salva.
+
 ## 1. Começando uma fase
 
 1. Saia do Play Mode e salve as alterações atuais.
