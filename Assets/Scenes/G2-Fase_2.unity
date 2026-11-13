@@ -901,6 +901,7 @@ GameObject:
   - component: {fileID: 274114918}
   - component: {fileID: 274114920}
   - component: {fileID: 274114921}
+  - component: {fileID: 2049100001}
   m_Layer: 0
   m_Name: Grid
   m_TagString: Untagged
@@ -1108,7 +1109,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 2049100003}
   m_Father: {fileID: 274114919}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &545212901
@@ -2702,6 +2704,7 @@ MonoBehaviour:
   quickShakeFrequency: 35
   openingShakeAmplitude: 0.04
   openingShakeFrequency: 5
+  ambientShakeInterval: {x: 14, y: 24}
 --- !u!114 &989047465
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7527,6 +7530,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1206789868}
     m_Modifications:
+    - target: {fileID: 604631047411653709, guid: a65f291c773af5a4ca1264871e3a3136, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2389945023270297738, guid: a65f291c773af5a4ca1264871e3a3136, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: -1659978770789742789, guid: d04c596f26eb81740a1aa1153bf83b76, type: 3}
     - target: {fileID: 7181388529109815329, guid: a65f291c773af5a4ca1264871e3a3136, type: 3}
       propertyPath: m_Name
       value: Gate_Vertical_R
@@ -7576,6 +7587,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 2045000010}
     - target: {fileID: 8644707815216110648, guid: a65f291c773af5a4ca1264871e3a3136, type: 3}
+      propertyPath: isOpen
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8644707815216110648, guid: a65f291c773af5a4ca1264871e3a3136, type: 3}
       propertyPath: feedback
       value: 
       objectReference: {fileID: 989047464}
@@ -7603,6 +7618,66 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b92a204bb9d49a8b9e2fa62aae6bdf0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: EquationShift.Gameplay::EquationShift.EquationGate
+--- !u!114 &2049100001
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 274114917}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f9967a04cc94bd29efa5cb30a94dca3, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: EquationShift.Gameplay::EquationShift.RuinsEntranceCutscene
+  error: {fileID: 2049100003}
+  gate: {fileID: 5509816136415384039}
+  exit: {fileID: 2049100004}
+  feedback: {fileID: 989047464}
+  triggerPosition: {x: -12.5, y: -1.5}
+  walkSpeed: 6
+  shakeDuration: 0.8
+--- !u!1001 &2049100002
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 543621015}
+    m_Modifications:
+    - target: {fileID: 8729260092324863164, guid: db7b0276f16249f4ac0a794849daaa81, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 10.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8729260092324863164, guid: db7b0276f16249f4ac0a794849daaa81, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8729260092324863164, guid: db7b0276f16249f4ac0a794849daaa81, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -1
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: db7b0276f16249f4ac0a794849daaa81, type: 3}
+--- !u!4 &2049100003 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8729260092324863164, guid: db7b0276f16249f4ac0a794849daaa81, type: 3}
+  m_PrefabInstance: {fileID: 2049100002}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2049100004 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 584762651749675366, guid: 448a6f0d4e266d84cb2193175da659db, type: 3}
+  m_PrefabInstance: {fileID: 190028607}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b9e055b26b6c714d8fe557e6ef7d813, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

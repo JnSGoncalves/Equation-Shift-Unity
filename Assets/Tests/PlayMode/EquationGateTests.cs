@@ -119,6 +119,31 @@ public class EquationGateTests
         Assert.IsFalse(anchor.TryMove(Vector2Int.right));
     }
 
+    [UnityTest]
+    public IEnumerator AmbientShakeRepeatsWithoutLockingMovementAndWaitsDuringCutscenes()
+    {
+        feedback.enabled = false;
+        var serialized = new SerializedObject(feedback);
+        serialized.FindProperty("ambientShakeInterval").vector2Value = new Vector2(0.25f, 0.25f);
+        serialized.ApplyModifiedPropertiesWithoutUndo();
+        feedback.enabled = true;
+
+        player.LockMovement(this);
+        yield return new WaitForSecondsRealtime(0.4f);
+        Assert.AreEqual(cameraPosition, feedback.transform.localPosition);
+        player.UnlockMovement(this);
+
+        for (int pulse = 0; pulse < 2; pulse++)
+        {
+            yield return new WaitUntil(() => (feedback.transform.localPosition - cameraPosition).sqrMagnitude > 0.000001f,
+                System.TimeSpan.FromSeconds(3), () => Assert.Fail("The ambient shake did not start."));
+            Assert.IsFalse(player.IsMovementLocked);
+            Assert.IsFalse(feedback.IsPlaying);
+            yield return new WaitUntil(() => feedback.transform.localPosition == cameraPosition,
+                System.TimeSpan.FromSeconds(3), () => Assert.Fail("The camera did not return to its resting position."));
+        }
+    }
+
     [TestCase("1=2")]
     [TestCase("1+=1")]
     [TestCase("1/0=0")]
@@ -148,6 +173,38 @@ public class EquationGateTests
         equation.Last().IsAncor = false;
         validator.ValidateEquations();
         Assert.IsFalse(gate.IsOpening);
+    }
+
+    [UnityTest]
+    public IEnumerator TwoAnchorsMustBelongToTheSameTrueEquation()
+    {
+        var first = Equation("1+1=2", Vector3Int.zero, Vector3Int.right);
+        var second = Equation("2=2", new Vector3Int(0, 3, 0), Vector3Int.right);
+        var gate = Gate(first[0], AncorSide.D, "Horizontal");
+        var additional = second[2];
+        additional.IsAncor = true;
+        additional.AncorSide = AncorSide.D;
+        var serializedGate = new SerializedObject(gate);
+        serializedGate.FindProperty("additionalAncor").objectReferenceValue = additional;
+        serializedGate.ApplyModifiedPropertiesWithoutUndo();
+
+        Assert.IsTrue(validator.ValidateEquations());
+        Assert.AreEqual(2, validator.Results.Count(result => result.IsTrue));
+        Assert.IsFalse(gate.IsOpening);
+        Assert.IsFalse(gate.IsOpen);
+
+        Object.DestroyImmediate(first[4].gameObject);
+        Object.DestroyImmediate(additional.gameObject);
+        additional = Equation("2", new Vector3Int(4, 0, 0), Vector3Int.right)[0];
+        additional.IsAncor = true;
+        additional.AncorSide = AncorSide.D;
+        serializedGate.FindProperty("additionalAncor").objectReferenceValue = additional;
+        serializedGate.ApplyModifiedPropertiesWithoutUndo();
+
+        Assert.IsTrue(validator.ValidateEquations());
+        Assert.IsTrue(gate.IsOpening);
+        yield return new WaitForSecondsRealtime(gate.OpeningDuration + 0.3f);
+        Assert.IsTrue(gate.IsOpen);
     }
 
     [UnityTest]

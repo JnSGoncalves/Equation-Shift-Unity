@@ -7,6 +7,7 @@ using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
+using UnityEngine.UI;
 
 public class G2GateTests
 {
@@ -22,14 +23,50 @@ public class G2GateTests
         var gate = GameObject.Find("Gate_Vertical_R").GetComponent<EquationGate>();
         var camera = Camera.main;
         Vector3 cameraPosition = camera.transform.localPosition;
+        var sequence = Object.FindFirstObjectByType<RuinsEntranceCutscene>();
+        var error = sequence.GetComponentsInChildren<Transform>(true).Single(t => t.name == "NPC_Error");
+        camera.aspect = 4f / 3f;
         Assert.AreEqual(AncorSide.R, gate.PassageSide);
         Assert.AreEqual(AncorSide.R, gate.Ancor.AncorSide);
         Assert.IsTrue(gate.Ancor.IsAncor);
+        Assert.IsTrue(error.gameObject.activeInHierarchy);
+        Assert.AreEqual(new Vector2(10.5f, -0.5f), (Vector2)error.position);
+        Assert.IsTrue(player.TryMove(Vector2Int.right));
+        yield return WaitFor(() => (camera.transform.localPosition - cameraPosition).sqrMagnitude > 0.000001f,
+            "The entrance shake did not start.");
+        Assert.AreEqual(board.CellAt(new Vector3(-12.5f, -1.5f)), player.Cell);
+        Assert.IsTrue(player.IsMovementLocked);
+        Assert.IsTrue(error.gameObject.activeInHierarchy);
+        yield return WaitFor(() => VillageDialogue.IsVisible, "Error did not speak after the shake.");
+        Assert.IsTrue(error.gameObject.activeSelf);
+        Assert.AreEqual(new Vector2(10.5f, -0.5f), (Vector2)error.position);
+        Assert.That(Object.FindFirstObjectByType<VillageDialogue>().GetComponentInChildren<Text>().text,
+            Does.Contain("Tremor engraçado"));
+        VillageDialogue.Hide();
+        yield return WaitFor(() => error.position.y < -0.6f, "Error did not walk down.");
+        Assert.That(error.position.x, Is.EqualTo(10.5f).Within(0.001f));
+        yield return WaitFor(() => !error.gameObject.activeSelf, "Error did not leave through the right gate.");
+        Assert.That(error.position.x, Is.GreaterThan(gate.transform.position.x));
+        Assert.That(error.position.y, Is.EqualTo(-1.5f).Within(0.001f));
+        yield return WaitFor(() => !player.IsMovementLocked, "Control did not return after closing the gate.");
+        Assert.That(Vector3.Distance(cameraPosition, camera.transform.localPosition), Is.LessThan(0.0001f));
         Assert.IsFalse(gate.IsOpen);
+        Assert.IsTrue(gate.GetComponent<Collider2D>().enabled);
 
         var blocks = board.GetComponentsInChildren<GridPushBlock>();
+        var two = blocks.Single(block => block.Value == '2');
         var four = blocks.Single(block => block.Value == '4');
         Vector3Int target = gate.Ancor.Cell + Vector3Int.left * 2;
+        Vector3Int twoTarget = gate.Ancor.Cell + Vector3Int.left * 4;
+        if (two.IsMovable && two.Cell == twoTarget + Vector3Int.left)
+        {
+            Physics2D.SyncTransforms();
+            Assert.IsTrue(player.TeleportToCell(two.Cell + Vector3Int.left));
+            Physics2D.SyncTransforms();
+            Assert.IsTrue(player.TryMove(Vector2Int.right));
+            yield return new WaitUntil(() => !two.IsMoving && !player.IsMoving);
+        }
+        Assert.AreEqual(twoTarget, two.Cell);
         Assert.IsTrue(four.IsMovable);
         Assert.AreEqual(target.x, four.Cell.x);
         int steps = Mathf.Abs(target.y - four.Cell.y);
@@ -55,6 +92,11 @@ public class G2GateTests
         Assert.IsFalse(player.IsMovementLocked);
         Assert.IsTrue(gate.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("Open"));
         Assert.That(Vector3.Distance(cameraPosition, camera.transform.localPosition), Is.LessThan(0.0001f));
+    }
+
+    private static IEnumerator WaitFor(System.Func<bool> condition, string message)
+    {
+        yield return new WaitUntil(condition, System.TimeSpan.FromSeconds(6), () => Assert.Fail(message));
     }
 }
 #endif

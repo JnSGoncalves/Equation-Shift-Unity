@@ -25,9 +25,11 @@ namespace EquationShift
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         private static void ResetProgress()
         {
-            ActivatedIds.Clear();
+            ResetActivations();
             Activated = null;
         }
+
+        internal static void ResetActivations() => ActivatedIds.Clear();
 
         public void Configure(string id)
         {

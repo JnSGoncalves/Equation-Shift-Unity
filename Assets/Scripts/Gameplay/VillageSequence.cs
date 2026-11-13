@@ -29,7 +29,7 @@ namespace EquationShift
         public int TalkedCount => talkedTo.Count;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
-        private static void ResetProgress() => escapedThisRun = false;
+        internal static void ResetProgress() => escapedThisRun = false;
 
         private void Awake()
         {

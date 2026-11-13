@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 namespace EquationShift
 {
@@ -11,26 +11,25 @@ namespace EquationShift
         [SerializeField] private Camera backgroundCamera;
         [SerializeField] private Transform[] blocks;
         [SerializeField] private Vector2 diagonalVelocity = new Vector2(0.65f, 0.95f);
-        [SerializeField] private CanvasGroup prompt;
+        [SerializeField] private Button actionButton;
         [SerializeField] private CanvasGroup fade;
         [SerializeField] private string firstLevel = "Assets/Scenes/G1-Fase_1.unity";
+        [SerializeField] private bool startsNewGame = true;
 
         private bool starting;
-        private float age;
         private const float Margin = 2f;
 
-        public void Configure(Camera camera, Transform[] decorations, CanvasGroup startPrompt, CanvasGroup curtain)
+        public void Configure(Camera camera, Transform[] decorations, Button button, CanvasGroup curtain)
         {
             backgroundCamera = camera;
             blocks = decorations;
-            prompt = startPrompt;
+            actionButton = button;
             fade = curtain;
         }
 
         private void Update()
         {
             float delta = Time.unscaledDeltaTime;
-            age += delta;
             if (backgroundCamera != null && blocks != null)
             {
                 float top = backgroundCamera.orthographicSize + Margin;
@@ -46,15 +45,6 @@ namespace EquationShift
                     blocks[i].localPosition = p;
                 }
             }
-            if (prompt != null) prompt.alpha = 0.65f + 0.25f * Mathf.Sin(age * 2f);
-            if (starting || age < 0.5f) return;
-            var keyboard = Keyboard.current;
-            var pad = Gamepad.current;
-            bool pressed = (keyboard != null && (keyboard.enterKey.wasPressedThisFrame || keyboard.spaceKey.wasPressedThisFrame)) ||
-                (pad != null && (pad.startButton.wasPressedThisFrame || pad.buttonSouth.wasPressedThisFrame)) ||
-                (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame) ||
-                (Touchscreen.current != null && Touchscreen.current.primaryTouch.press.wasPressedThisFrame);
-            if (pressed) StartGame();
         }
 
         public void StartGame()
@@ -62,10 +52,11 @@ namespace EquationShift
             if (starting) return;
             if (!Application.CanStreamedLevelBeLoaded(firstLevel))
             {
-                Debug.LogError("Inclua a primeira fase nas cenas habilitadas do Build: " + firstLevel, this);
+                Debug.LogError("Inclua o destino nas cenas habilitadas do Build: " + firstLevel, this);
                 return;
             }
             starting = true;
+            if (actionButton != null) actionButton.interactable = false;
             StartCoroutine(EnterLevel());
         }
 
@@ -78,6 +69,7 @@ namespace EquationShift
                 if (fade != null) fade.alpha = Mathf.Clamp01(elapsed / 0.4f);
                 yield return null;
             }
+            if (startsNewGame) GameProgress.StartNewGame();
             yield return SceneManager.LoadSceneAsync(firstLevel);
         }
     }

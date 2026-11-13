@@ -1,4 +1,4 @@
 {
   "name": "EquationShift.Title",
-  "references": ["Unity.ugui", "Unity.InputSystem"]
+  "references": ["EquationShift.Gameplay", "Unity.ugui"]
 }

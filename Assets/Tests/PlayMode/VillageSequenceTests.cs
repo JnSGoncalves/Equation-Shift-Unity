@@ -21,7 +21,9 @@ public class VillageSequenceTests
     {
         Assert.IsTrue(ScenePortal.TryResolveScene("G1", out string villagePath));
         yield return SceneManager.LoadSceneAsync("Assets/Scenes/Title.unity", LoadSceneMode.Single);
-        GameObject.Find("Title Screen").SendMessage("StartGame");
+        var play = Object.FindFirstObjectByType<Button>();
+        Assert.AreEqual("Jogar", play.GetComponentInChildren<Text>().text);
+        play.onClick.Invoke();
         yield return WaitUntil(() => SceneManager.GetActiveScene().path == villagePath && VillageDialogue.IsVisible,
             7f, "The movement hint did not appear when starting from the title screen.");
         Scene village = SceneManager.GetActiveScene();
@@ -34,6 +36,8 @@ public class VillageSequenceTests
         var serialized = new SerializedObject(sequence);
         var error = (VillageNpc)serialized.FindProperty("error").objectReferenceValue;
         var guard = npcs.Single(npc => Vector2.Distance(npc.transform.position, new Vector2(12.5f, -2.5f)) < 0.001f);
+        var cameraSettings = new SerializedObject(camera.GetComponent<GateOpeningFeedback>());
+        Assert.AreEqual(Vector2.zero, cameraSettings.FindProperty("ambientShakeInterval").vector2Value);
 
         Assert.AreEqual(11, npcs.Length);
         var counts = npcs.GroupBy(npc => npc.GetComponent<Animator>().runtimeAnimatorController.name)
