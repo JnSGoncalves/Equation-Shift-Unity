@@ -2539,7 +2539,6 @@ MonoBehaviour:
   quickShakeFrequency: 35
   openingShakeAmplitude: 0.04
   openingShakeFrequency: 5
-  ambientShakeInterval: {x: 0, y: 0}
 --- !u!114 &989047465
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3321,6 +3320,16 @@ Tilemap:
       m_TileObjectToInstantiateIndex: 65535
       dummyAlignment: 0
       m_AllTileFlags: 1073741825
+  - first: {x: -13, y: -8, z: 0}
+    second:
+      serializedVersion: 2
+      m_TileIndex: 133
+      m_TileSpriteIndex: 133
+      m_TileMatrixIndex: 2
+      m_TileColorIndex: 0
+      m_TileObjectToInstantiateIndex: 65535
+      dummyAlignment: 0
+      m_AllTileFlags: 1073741825
   - first: {x: -12, y: -8, z: 0}
     second:
       serializedVersion: 2
@@ -3342,6 +3351,16 @@ Tilemap:
       dummyAlignment: 0
       m_AllTileFlags: 1073741825
   - first: {x: -10, y: -8, z: 0}
+    second:
+      serializedVersion: 2
+      m_TileIndex: 133
+      m_TileSpriteIndex: 133
+      m_TileMatrixIndex: 2
+      m_TileColorIndex: 0
+      m_TileObjectToInstantiateIndex: 65535
+      dummyAlignment: 0
+      m_AllTileFlags: 1073741825
+  - first: {x: -9, y: -8, z: 0}
     second:
       serializedVersion: 2
       m_TileIndex: 133
@@ -3591,7 +3610,27 @@ Tilemap:
       m_TileObjectToInstantiateIndex: 65535
       dummyAlignment: 0
       m_AllTileFlags: 1073741825
+  - first: {x: -12, y: -7, z: 0}
+    second:
+      serializedVersion: 2
+      m_TileIndex: 133
+      m_TileSpriteIndex: 133
+      m_TileMatrixIndex: 2
+      m_TileColorIndex: 0
+      m_TileObjectToInstantiateIndex: 65535
+      dummyAlignment: 0
+      m_AllTileFlags: 1073741825
   - first: {x: -11, y: -7, z: 0}
+    second:
+      serializedVersion: 2
+      m_TileIndex: 133
+      m_TileSpriteIndex: 133
+      m_TileMatrixIndex: 2
+      m_TileColorIndex: 0
+      m_TileObjectToInstantiateIndex: 65535
+      dummyAlignment: 0
+      m_AllTileFlags: 1073741825
+  - first: {x: -10, y: -7, z: 0}
     second:
       serializedVersion: 2
       m_TileIndex: 133
@@ -3861,6 +3900,16 @@ Tilemap:
       m_TileObjectToInstantiateIndex: 65535
       dummyAlignment: 0
       m_AllTileFlags: 1073741825
+  - first: {x: -11, y: -6, z: 0}
+    second:
+      serializedVersion: 2
+      m_TileIndex: 133
+      m_TileSpriteIndex: 133
+      m_TileMatrixIndex: 2
+      m_TileColorIndex: 0
+      m_TileObjectToInstantiateIndex: 65535
+      dummyAlignment: 0
+      m_AllTileFlags: 1073741825
   - first: {x: -10, y: -6, z: 0}
     second:
       serializedVersion: 2
@@ -4041,6 +4090,56 @@ Tilemap:
       m_TileObjectToInstantiateIndex: 65535
       dummyAlignment: 0
       m_AllTileFlags: 1073741825
+  - first: {x: 8, y: -6, z: 0}
+    second:
+      serializedVersion: 2
+      m_TileIndex: 133
+      m_TileSpriteIndex: 133
+      m_TileMatrixIndex: 2
+      m_TileColorIndex: 0
+      m_TileObjectToInstantiateIndex: 65535
+      dummyAlignment: 0
+      m_AllTileFlags: 1073741825
+  - first: {x: 9, y: -6, z: 0}
+    second:
+      serializedVersion: 2
+      m_TileIndex: 133
+      m_TileSpriteIndex: 133
+      m_TileMatrixIndex: 2
+      m_TileColorIndex: 0
+      m_TileObjectToInstantiateIndex: 65535
+      dummyAlignment: 0
+      m_AllTileFlags: 1073741825
+  - first: {x: 10, y: -6, z: 0}
+    second:
+      serializedVersion: 2
+      m_TileIndex: 133
+      m_TileSpriteIndex: 133
+      m_TileMatrixIndex: 2
+      m_TileColorIndex: 0
+      m_TileObjectToInstantiateIndex: 65535
+      dummyAlignment: 0
+      m_AllTileFlags: 1073741825
+  - first: {x: 11, y: -6, z: 0}
+    second:
+      serializedVersion: 2
+      m_TileIndex: 133
+      m_TileSpriteIndex: 133
+      m_TileMatrixIndex: 2
+      m_TileColorIndex: 0
+      m_TileObjectToInstantiateIndex: 65535
+      dummyAlignment: 0
+      m_AllTileFlags: 1073741825
+  - first: {x: 12, y: -6, z: 0}
+    second:
+      serializedVersion: 2
+      m_TileIndex: 133
+      m_TileSpriteIndex: 133
+      m_TileMatrixIndex: 2
+      m_TileColorIndex: 0
+      m_TileObjectToInstantiateIndex: 65535
+      dummyAlignment: 0
+      m_AllTileFlags: 1073741825
   - first: {x: 13, y: -6, z: 0}
     second:
       serializedVersion: 2
@@ -4071,7 +4170,27 @@ Tilemap:
       m_TileObjectToInstantiateIndex: 65535
       dummyAlignment: 0
       m_AllTileFlags: 1073741825
+  - first: {x: -12, y: -5, z: 0}
+    second:
+      serializedVersion: 2
+      m_TileIndex: 133
+      m_TileSpriteIndex: 133
+      m_TileMatrixIndex: 2
+      m_TileColorIndex: 0
+      m_TileObjectToInstantiateIndex: 65535
+      dummyAlignment: 0
+      m_AllTileFlags: 1073741825
   - first: {x: -11, y: -5, z: 0}
+    second:
+      serializedVersion: 2
+      m_TileIndex: 133
+      m_TileSpriteIndex: 133
+      m_TileMatrixIndex: 2
+      m_TileColorIndex: 0
+      m_TileObjectToInstantiateIndex: 65535
+      dummyAlignment: 0
+      m_AllTileFlags: 1073741825
+  - first: {x: -10, y: -5, z: 0}
     second:
       serializedVersion: 2
       m_TileIndex: 133
@@ -4321,6 +4440,16 @@ Tilemap:
       m_TileObjectToInstantiateIndex: 65535
       dummyAlignment: 0
       m_AllTileFlags: 1073741825
+  - first: {x: -13, y: -4, z: 0}
+    second:
+      serializedVersion: 2
+      m_TileIndex: 133
+      m_TileSpriteIndex: 133
+      m_TileMatrixIndex: 2
+      m_TileColorIndex: 0
+      m_TileObjectToInstantiateIndex: 65535
+      dummyAlignment: 0
+      m_AllTileFlags: 1073741825
   - first: {x: -12, y: -4, z: 0}
     second:
       serializedVersion: 2
@@ -4342,6 +4471,16 @@ Tilemap:
       dummyAlignment: 0
       m_AllTileFlags: 1073741825
   - first: {x: -10, y: -4, z: 0}
+    second:
+      serializedVersion: 2
+      m_TileIndex: 133
+      m_TileSpriteIndex: 133
+      m_TileMatrixIndex: 2
+      m_TileColorIndex: 0
+      m_TileObjectToInstantiateIndex: 65535
+      dummyAlignment: 0
+      m_AllTileFlags: 1073741825
+  - first: {x: -9, y: -4, z: 0}
     second:
       serializedVersion: 2
       m_TileIndex: 133
@@ -6341,6 +6480,16 @@ Tilemap:
       m_TileObjectToInstantiateIndex: 65535
       dummyAlignment: 0
       m_AllTileFlags: 1073741825
+  - first: {x: -11, y: 3, z: 0}
+    second:
+      serializedVersion: 2
+      m_TileIndex: 133
+      m_TileSpriteIndex: 133
+      m_TileMatrixIndex: 2
+      m_TileColorIndex: 0
+      m_TileObjectToInstantiateIndex: 65535
+      dummyAlignment: 0
+      m_AllTileFlags: 1073741825
   - first: {x: -10, y: 3, z: 0}
     second:
       serializedVersion: 2
@@ -6541,6 +6690,16 @@ Tilemap:
       m_TileObjectToInstantiateIndex: 65535
       dummyAlignment: 0
       m_AllTileFlags: 1073741825
+  - first: {x: 10, y: 3, z: 0}
+    second:
+      serializedVersion: 2
+      m_TileIndex: 133
+      m_TileSpriteIndex: 133
+      m_TileMatrixIndex: 2
+      m_TileColorIndex: 0
+      m_TileObjectToInstantiateIndex: 65535
+      dummyAlignment: 0
+      m_AllTileFlags: 1073741825
   - first: {x: 11, y: 3, z: 0}
     second:
       serializedVersion: 2
@@ -6596,6 +6755,16 @@ Tilemap:
       serializedVersion: 2
       m_TileIndex: 134
       m_TileSpriteIndex: 134
+      m_TileMatrixIndex: 2
+      m_TileColorIndex: 0
+      m_TileObjectToInstantiateIndex: 65535
+      dummyAlignment: 0
+      m_AllTileFlags: 1073741825
+  - first: {x: -11, y: 4, z: 0}
+    second:
+      serializedVersion: 2
+      m_TileIndex: 133
+      m_TileSpriteIndex: 133
       m_TileMatrixIndex: 2
       m_TileColorIndex: 0
       m_TileObjectToInstantiateIndex: 65535
@@ -6851,6 +7020,56 @@ Tilemap:
       m_TileObjectToInstantiateIndex: 65535
       dummyAlignment: 0
       m_AllTileFlags: 1073741825
+  - first: {x: -13, y: 5, z: 0}
+    second:
+      serializedVersion: 2
+      m_TileIndex: 133
+      m_TileSpriteIndex: 133
+      m_TileMatrixIndex: 2
+      m_TileColorIndex: 0
+      m_TileObjectToInstantiateIndex: 65535
+      dummyAlignment: 0
+      m_AllTileFlags: 1073741825
+  - first: {x: -12, y: 5, z: 0}
+    second:
+      serializedVersion: 2
+      m_TileIndex: 133
+      m_TileSpriteIndex: 133
+      m_TileMatrixIndex: 2
+      m_TileColorIndex: 0
+      m_TileObjectToInstantiateIndex: 65535
+      dummyAlignment: 0
+      m_AllTileFlags: 1073741825
+  - first: {x: -11, y: 5, z: 0}
+    second:
+      serializedVersion: 2
+      m_TileIndex: 133
+      m_TileSpriteIndex: 133
+      m_TileMatrixIndex: 2
+      m_TileColorIndex: 0
+      m_TileObjectToInstantiateIndex: 65535
+      dummyAlignment: 0
+      m_AllTileFlags: 1073741825
+  - first: {x: -10, y: 5, z: 0}
+    second:
+      serializedVersion: 2
+      m_TileIndex: 134
+      m_TileSpriteIndex: 134
+      m_TileMatrixIndex: 2
+      m_TileColorIndex: 0
+      m_TileObjectToInstantiateIndex: 65535
+      dummyAlignment: 0
+      m_AllTileFlags: 1073741825
+  - first: {x: -9, y: 5, z: 0}
+    second:
+      serializedVersion: 2
+      m_TileIndex: 133
+      m_TileSpriteIndex: 133
+      m_TileMatrixIndex: 2
+      m_TileColorIndex: 0
+      m_TileObjectToInstantiateIndex: 65535
+      dummyAlignment: 0
+      m_AllTileFlags: 1073741825
   - first: {x: -8, y: 5, z: 0}
     second:
       serializedVersion: 2
@@ -7011,6 +7230,56 @@ Tilemap:
       m_TileObjectToInstantiateIndex: 65535
       dummyAlignment: 0
       m_AllTileFlags: 1073741825
+  - first: {x: 8, y: 5, z: 0}
+    second:
+      serializedVersion: 2
+      m_TileIndex: 133
+      m_TileSpriteIndex: 133
+      m_TileMatrixIndex: 2
+      m_TileColorIndex: 0
+      m_TileObjectToInstantiateIndex: 65535
+      dummyAlignment: 0
+      m_AllTileFlags: 1073741825
+  - first: {x: 9, y: 5, z: 0}
+    second:
+      serializedVersion: 2
+      m_TileIndex: 133
+      m_TileSpriteIndex: 133
+      m_TileMatrixIndex: 2
+      m_TileColorIndex: 0
+      m_TileObjectToInstantiateIndex: 65535
+      dummyAlignment: 0
+      m_AllTileFlags: 1073741825
+  - first: {x: 10, y: 5, z: 0}
+    second:
+      serializedVersion: 2
+      m_TileIndex: 133
+      m_TileSpriteIndex: 133
+      m_TileMatrixIndex: 2
+      m_TileColorIndex: 0
+      m_TileObjectToInstantiateIndex: 65535
+      dummyAlignment: 0
+      m_AllTileFlags: 1073741825
+  - first: {x: 11, y: 5, z: 0}
+    second:
+      serializedVersion: 2
+      m_TileIndex: 133
+      m_TileSpriteIndex: 133
+      m_TileMatrixIndex: 2
+      m_TileColorIndex: 0
+      m_TileObjectToInstantiateIndex: 65535
+      dummyAlignment: 0
+      m_AllTileFlags: 1073741825
+  - first: {x: 12, y: 5, z: 0}
+    second:
+      serializedVersion: 2
+      m_TileIndex: 133
+      m_TileSpriteIndex: 133
+      m_TileMatrixIndex: 2
+      m_TileColorIndex: 0
+      m_TileObjectToInstantiateIndex: 65535
+      dummyAlignment: 0
+      m_AllTileFlags: 1073741825
   - first: {x: 13, y: 5, z: 0}
     second:
       serializedVersion: 2
@@ -7042,6 +7311,16 @@ Tilemap:
       dummyAlignment: 0
       m_AllTileFlags: 1073741825
   - first: {x: -12, y: 6, z: 0}
+    second:
+      serializedVersion: 2
+      m_TileIndex: 133
+      m_TileSpriteIndex: 133
+      m_TileMatrixIndex: 2
+      m_TileColorIndex: 0
+      m_TileObjectToInstantiateIndex: 65535
+      dummyAlignment: 0
+      m_AllTileFlags: 1073741825
+  - first: {x: -11, y: 6, z: 0}
     second:
       serializedVersion: 2
       m_TileIndex: 133
@@ -7321,6 +7600,16 @@ Tilemap:
       m_TileObjectToInstantiateIndex: 65535
       dummyAlignment: 0
       m_AllTileFlags: 1073741825
+  - first: {x: -11, y: 7, z: 0}
+    second:
+      serializedVersion: 2
+      m_TileIndex: 133
+      m_TileSpriteIndex: 133
+      m_TileMatrixIndex: 2
+      m_TileColorIndex: 0
+      m_TileObjectToInstantiateIndex: 65535
+      dummyAlignment: 0
+      m_AllTileFlags: 1073741825
   - first: {x: -10, y: 7, z: 0}
     second:
       serializedVersion: 2
@@ -7512,6 +7801,16 @@ Tilemap:
       dummyAlignment: 0
       m_AllTileFlags: 1073741825
   - first: {x: 9, y: 7, z: 0}
+    second:
+      serializedVersion: 2
+      m_TileIndex: 133
+      m_TileSpriteIndex: 133
+      m_TileMatrixIndex: 2
+      m_TileColorIndex: 0
+      m_TileObjectToInstantiateIndex: 65535
+      dummyAlignment: 0
+      m_AllTileFlags: 1073741825
+  - first: {x: 10, y: 7, z: 0}
     second:
       serializedVersion: 2
       m_TileIndex: 133
@@ -8099,9 +8398,9 @@ Tilemap:
     m_Data: {fileID: 0}
   - m_RefCount: 9
     m_Data: {fileID: 11400000, guid: e29411392a477a84ea3d53ce10b31a74, type: 2}
-  - m_RefCount: 457
+  - m_RefCount: 486
     m_Data: {fileID: 11400000, guid: 235e2d4df992eaa45a9790bace08c2e8, type: 2}
-  - m_RefCount: 14
+  - m_RefCount: 15
     m_Data: {fileID: 11400000, guid: 4ee92592d2334d8458629c9ce6ffcd78, type: 2}
   - m_RefCount: 0
     m_Data: {fileID: 0}
@@ -8372,9 +8671,9 @@ Tilemap:
     m_Data: {fileID: 0}
   - m_RefCount: 9
     m_Data: {fileID: 1228785260, guid: 56bccd8eb7d069b4e96c252107fe395a, type: 3}
-  - m_RefCount: 457
+  - m_RefCount: 486
     m_Data: {fileID: 122419548, guid: 56bccd8eb7d069b4e96c252107fe395a, type: 3}
-  - m_RefCount: 14
+  - m_RefCount: 15
     m_Data: {fileID: 1720923337, guid: 56bccd8eb7d069b4e96c252107fe395a, type: 3}
   - m_RefCount: 0
     m_Data: {fileID: 0}
@@ -8415,7 +8714,7 @@ Tilemap:
       e31: 0
       e32: 7.65e-43
       e33: 7.62e-43
-  - m_RefCount: 480
+  - m_RefCount: 510
     m_Data:
       e00: 1
       e01: 0
@@ -8434,7 +8733,7 @@ Tilemap:
       e32: 0
       e33: 1
   m_TileColorArray:
-  - m_RefCount: 480
+  - m_RefCount: 510
     m_Data: {r: 1, g: 1, b: 1, a: 1}
   m_TileObjectToInstantiateArray: []
   m_AnimationFrameRate: 1
@@ -8517,7 +8816,7 @@ MonoBehaviour:
   dialogue: "Este port\xE3o leva \xE0s Ru\xEDnas da Matem\xE1tica. L\xE1 est\xE3o
     as fun\xE7\xF5es que regem o mundo."
   aftermathDialogue: "Voc\xEA sentiu o tremor? Pode ter acontecido algo com as fun\xE7\xF5es
-    nas ru\xEDnas.\nAlgu\xE9m precisa verificar isso!"
+    nas ru\xEDnas."
 --- !u!1001 &2051000004
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8574,8 +8873,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: EquationShift.Gameplay::EquationShift.VillageNpc
   dialogue: "O igual mant\xE9m a balan\xE7a em equil\xEDbrio. Cada lado tem de valer
     o mesmo."
-  aftermathDialogue: "Depois do tremor, nem as duas bandejas da balan\xE7a pararam
-    quietas."
+  aftermathDialogue: "Depois do tremor, nem as duas bandejas da balança pararam quietas."
 --- !u!1001 &2051000008
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8630,8 +8928,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7f31bec3cf54522ba91c8372fe74c22, type: 3}
   m_Name: 
   m_EditorClassIdentifier: EquationShift.Gameplay::EquationShift.VillageNpc
-  dialogue: "Toda simbolo tem um prop\xF3ito, mas qual seria o nosso?"
-  aftermathDialogue: "O que o Error foi procurar nas ru\xEDnas?"
+  dialogue: "Toda solu\xE7\xE3o come\xE7a com uma boa pergunta."
+  aftermathDialogue: "O que o Error foi procurar nas ruínas?"
 --- !u!1001 &2051000012
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8646,11 +8944,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8729260092324863164, guid: 9d9f24fdd3fb4995acedb3a02483e181, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -8.5
+      value: -10.5
       objectReference: {fileID: 0}
     - target: {fileID: 8729260092324863164, guid: 9d9f24fdd3fb4995acedb3a02483e181, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 2.5
+      value: 4.5
       objectReference: {fileID: 0}
     - target: {fileID: 8729260092324863164, guid: 9d9f24fdd3fb4995acedb3a02483e181, type: 3}
       propertyPath: m_LocalPosition.z
@@ -8687,8 +8985,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: EquationShift.Gameplay::EquationShift.VillageNpc
   dialogue: "Por que algumas passagens s\xF3 abrem quando a conta d\xE1 certo?"
-  aftermathDialogue: "Se o tremor veio das ru\xEDnas, o que ser\xE1 que mudou l\xE1
-    dentro?"
+  aftermathDialogue: "Se o tremor veio das ruínas, o que será que mudou lá dentro?"
 --- !u!1001 &2051000016
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8703,7 +9000,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8729260092324863164, guid: a8ec6659ad1c4fffbae0e9f776ab5b49, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -3.5
+      value: -7.5
       objectReference: {fileID: 0}
     - target: {fileID: 8729260092324863164, guid: a8ec6659ad1c4fffbae0e9f776ab5b49, type: 3}
       propertyPath: m_LocalPosition.y
@@ -8744,7 +9041,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: EquationShift.Gameplay::EquationShift.VillageNpc
   dialogue: "Quando a vila precisa de ajuda, a gente soma for\xE7as."
-  aftermathDialogue: "Vou juntar os vizinhos e ver se todo mundo est\xE1 bem."
+  aftermathDialogue: "Vou juntar os vizinhos e ver se todo mundo está bem."
 --- !u!1001 &2051000020
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8801,8 +9098,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: EquationShift.Gameplay::EquationShift.VillageNpc
   dialogue: "As fun\xE7\xF5es d\xE3o ordem \xE0s mudan\xE7as. Sem elas, at\xE9 uma
     soma sairia do trilho."
-  aftermathDialogue: "Se alguma fun\xE7\xE3o falhou, talvez as contas das ru\xEDnas
-    tenham mudado."
+  aftermathDialogue: "Se alguma função falhou, talvez as contas das ruínas tenham mudado."
 --- !u!1001 &2051000024
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8817,11 +9113,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8729260092324863164, guid: 6e84f0b05b4943ec823dd3b03ba0d1e2, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -7.5
+      value: -11.5
       objectReference: {fileID: 0}
     - target: {fileID: 8729260092324863164, guid: 6e84f0b05b4943ec823dd3b03ba0d1e2, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -2.5
+      value: -1.5
       objectReference: {fileID: 0}
     - target: {fileID: 8729260092324863164, guid: 6e84f0b05b4943ec823dd3b03ba0d1e2, type: 3}
       propertyPath: m_LocalPosition.z
@@ -8858,8 +9154,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: EquationShift.Gameplay::EquationShift.VillageNpc
   dialogue: "Multiplicar \xE9 repetir uma soma sem dar tantas voltas."
-  aftermathDialogue: "Aquele tremor fez todas as janelas da pra\xE7a baterem de uma
-    vez."
+  aftermathDialogue: "Aquele tremor fez todas as janelas da praça baterem de uma vez."
 --- !u!1001 &2051000028
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8914,10 +9209,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7f31bec3cf54522ba91c8372fe74c22, type: 3}
   m_Name: 
   m_EditorClassIdentifier: EquationShift.Gameplay::EquationShift.VillageNpc
-  dialogue: "J\xE1 reparou como um \xFAnico sinal pode mudar uma conta inteira?\nAinda
-    bem que as fun\xE7\xF5es nas ru\xEDnas nos protegem."
-  aftermathDialogue: "Vi o Error passar pelo port\xE3o. Logo depois, o ch\xE3o come\xE7ou
-    a tremer."
+  dialogue: "J\xE1 reparou como um \xFAnico sinal pode mudar uma conta inteira?"
+  aftermathDialogue: "Vi o Error passar pelo portão. Logo depois, o chão começou a tremer."
 --- !u!1001 &2051000032
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8932,7 +9225,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8729260092324863164, guid: 9680308e86604d20bbe75aef9c6fd20d, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 1.5
+      value: -1.5
       objectReference: {fileID: 0}
     - target: {fileID: 8729260092324863164, guid: 9680308e86604d20bbe75aef9c6fd20d, type: 3}
       propertyPath: m_LocalPosition.y
@@ -8973,8 +9266,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: EquationShift.Gameplay::EquationShift.VillageNpc
   dialogue: Eu divido as tarefas. Assim, cada sinal faz sua parte.
-  aftermathDialogue: "Vamos dividir as tarefas. Eu cuido da pra\xE7a, voc\xEA pode
-    falar com o guarda."
+  aftermathDialogue: "Vamos dividir as tarefas. Eu cuido da praça, você pode falar com o guarda."
 --- !u!1001 &2051000036
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8989,11 +9281,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8729260092324863164, guid: 9680308e86604d20bbe75aef9c6fd20d, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 6.5
+      value: 7.5
       objectReference: {fileID: 0}
     - target: {fileID: 8729260092324863164, guid: 9680308e86604d20bbe75aef9c6fd20d, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -3.5
+      value: -5.5
       objectReference: {fileID: 0}
     - target: {fileID: 8729260092324863164, guid: 9680308e86604d20bbe75aef9c6fd20d, type: 3}
       propertyPath: m_LocalPosition.z
@@ -9030,8 +9322,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: EquationShift.Gameplay::EquationShift.VillageNpc
   dialogue: "Dividir por zero? Nem os s\xE1bios das ru\xEDnas ousam tentar."
-  aftermathDialogue: "J\xE1 ouvi hist\xF3rias sobre as ru\xEDnas, mas nenhuma falava
-    de um tremor desses."
+  aftermathDialogue: "Já ouvi histórias sobre as ruínas, mas nenhuma falava de um tremor desses."
 --- !u!1001 &2051000040
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -9088,8 +9379,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: EquationShift.Gameplay::EquationShift.VillageNpc
   dialogue: "Essa vila \xE9 muito chata! Queria fazer algo diferente s\xF3 para me
     divertir."
-  aftermathDialogue: "Eu s\xF3 queria me divertir. N\xE3o achei que as ru\xEDnas
-    fossem tremer."
+  aftermathDialogue: "Eu só queria me divertir. Não achei que as ruínas fossem tremer."
 --- !u!114 &2051000044
 MonoBehaviour:
   m_ObjectHideFlags: 0
