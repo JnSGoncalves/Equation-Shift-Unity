@@ -6,6 +6,10 @@ namespace EquationShift
     [DefaultExecutionOrder(-32000), DisallowMultipleComponent]
     public sealed class RoomScene : MonoBehaviour
     {
-        private void Awake() => SceneTransition.Controller?.PrepareDestination(gameObject.scene);
+        private void Awake()
+        {
+            SceneTransition.Controller?.PrepareDestination(gameObject.scene);
+            gameObject.AddComponent<PauseMenu>();
+        }
     }
 }

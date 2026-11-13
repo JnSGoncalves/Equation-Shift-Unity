@@ -71,9 +71,13 @@ namespace EquationShift
             resetEntrance = entrance;
         }
 
+        internal bool CanResetLevel(object allowedLock = null) =>
+            board != null && !SceneTransition.IsTravelling &&
+            (movementLocks.Count == 0 || (movementLocks.Count == 1 && movementLocks.Contains(allowedLock)));
+
         public bool TryResetLevel()
         {
-            if (board == null || IsMovementLocked || SceneTransition.IsTravelling) return false;
+            if (!CanResetLevel()) return false;
             foreach (GridPushBlock block in board.GetComponentsInChildren<GridPushBlock>(true))
                 block.ResetToInitialState();
             Physics2D.SyncTransforms();
@@ -221,7 +225,7 @@ namespace EquationShift
 
         private void Update()
         {
-            if (cutsceneOwner != null) return;
+            if (cutsceneOwner != null || Time.timeScale == 0f) return;
             Keyboard keyboard = Keyboard.current;
             if (keyboard != null && keyboard.rKey.wasPressedThisFrame && TryResetLevel()) return;
             if (keyboard != null && keyboard.tabKey.wasPressedThisFrame) CycleForm();

@@ -2539,6 +2539,7 @@ MonoBehaviour:
   quickShakeFrequency: 35
   openingShakeAmplitude: 0.04
   openingShakeFrequency: 5
+  ambientShakeInterval: {x: 0, y: 0}
 --- !u!114 &989047465
 MonoBehaviour:
   m_ObjectHideFlags: 0

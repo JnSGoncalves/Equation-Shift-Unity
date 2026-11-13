@@ -33,7 +33,7 @@ namespace EquationShift
             }
 
             instance.label.text = text;
-            instance.hideAt = Time.unscaledTime + instance.displayDuration;
+            instance.hideAt = Time.time + instance.displayDuration;
             instance.canvas.enabled = true;
         }
 
@@ -87,7 +87,7 @@ namespace EquationShift
 
         private void Update()
         {
-            if (canvas.enabled && (SceneTransition.IsTravelling || Time.unscaledTime >= hideAt))
+            if (canvas.enabled && (SceneTransition.IsTravelling || Time.time >= hideAt))
                 canvas.enabled = false;
         }
 

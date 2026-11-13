@@ -96,7 +96,7 @@ namespace EquationShift
 
         private void LateUpdate()
         {
-            if (!validateAutomatically || !ResolveReferences()) return;
+            if (!validateAutomatically || Time.timeScale == 0f || !ResolveReferences()) return;
             CollectBlocks();
             if (!hasValidated || LayoutChanged()) ValidateCurrentLayout();
         }
