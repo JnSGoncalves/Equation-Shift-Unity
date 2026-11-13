@@ -77,7 +77,8 @@ public class EquationGateTests
         return result;
     }
 
-    private EquationGate Gate(GridPushBlock anchor, AncorSide side, string orientation = "Vertical", bool startsOpen = false)
+    private EquationGate Gate(GridPushBlock anchor, AncorSide side, string orientation = "Vertical",
+        bool startsOpen = false, PlayerForm requiredForm = PlayerForm.Default)
     {
         anchor.IsAncor = true;
         anchor.AncorSide = side;
@@ -96,6 +97,7 @@ public class EquationGateTests
             AssetDatabase.LoadAssetAtPath<AnimationClip>(path + "_Closing.anim"));
         var serializedGate = new SerializedObject(gate);
         serializedGate.FindProperty("isOpen").boolValue = startsOpen;
+        serializedGate.FindProperty("requiredPlayerForm").enumValueIndex = (int)requiredForm;
         serializedGate.ApplyModifiedPropertiesWithoutUndo();
         actor.SetActive(true);
         return gate;
@@ -257,6 +259,45 @@ public class EquationGateTests
     }
 
     [UnityTest]
+    public IEnumerator RequiredFormBlocksThePortalDuringArrivalUntilThePlayerSolvesTheEquation()
+    {
+        var equation = Equation("3+2=5", Vector3Int.zero, Vector3Int.right);
+        var gate = Gate(equation.First(), AncorSide.R, requiredForm: PlayerForm.Mult);
+        var gateCell = board.CellAt(gate.transform.position);
+        var actor = Child("Exit");
+        actor.transform.position = board.CenterOf(gateCell + Vector3Int.right);
+        var portal = actor.AddComponent<ScenePortal>();
+        portal.Configure(board, "A0", Vector2Int.left, gate);
+        gate.OpenForArrival(player);
+        Assert.IsTrue(player.TeleportToCell(gateCell));
+        Physics2D.SyncTransforms();
+        Assert.IsFalse(player.TryMove(Vector2Int.right), "The temporary arrival opening must not bypass the puzzle.");
+        Assert.IsTrue(player.TryMove(Vector2Int.left), "The player must be able to leave the gate toward the room.");
+        yield return new WaitForSecondsRealtime(gate.ClosingDuration + 0.6f);
+        Assert.IsFalse(gate.IsOpen);
+
+        Assert.IsTrue(validator.ValidateEquations());
+        Assert.IsFalse(gate.IsOpening, "An equation made only of blocks cannot open a form gate.");
+
+        Object.DestroyImmediate(equation[1].gameObject);
+        Assert.IsTrue(player.TeleportToCell(Vector3Int.right));
+        player.UnlockForm(PlayerForm.Plus);
+        player.CurrentForm = PlayerForm.Plus;
+        Assert.IsTrue(validator.ValidateEquations());
+        Assert.IsFalse(gate.IsOpening, "The true equation must use the required form.");
+
+        equation.Last().Value = '6';
+        player.UnlockForm(PlayerForm.Mult);
+        player.CurrentForm = PlayerForm.Mult;
+        Assert.IsTrue(validator.ValidateEquations());
+        Assert.IsTrue(gate.IsOpening);
+        yield return new WaitForSecondsRealtime(gate.OpeningDuration + 0.3f);
+        Assert.IsTrue(gate.IsOpen);
+        Assert.IsTrue(player.TeleportToCell(gateCell));
+        Assert.IsTrue(player.TryMove(Vector2Int.right), "The portal must allow passage after the correct form is used.");
+    }
+
+    [UnityTest]
     public IEnumerator GateConfiguredOpenStaysOpenAfterArrivalPlayerLeaves()
     {
         var gate = Gate(Equation("2", Vector3Int.zero, Vector3Int.right)[0], AncorSide.L, startsOpen: true);
@@ -326,8 +367,8 @@ public class EquationGateTests
         yield return SceneManager.LoadSceneAsync("00-FaseExemplo_1");
         yield return null;
         var sceneBoard = Object.FindFirstObjectByType<LevelGrid>();
-        foreach (var entry in new[] { ("Gate_Vertical", "block_2_Ancor_L", AncorSide.L),
-                                     ("Gate_Horizontal", "block_0_Ancor_D", AncorSide.D) })
+        foreach (var entry in new[] { ("Gate_Vertical_L", "Block_Static_Digit_2_Ancor_L", AncorSide.L),
+                                     ("Gate_Horizontal_D", "Block_Static_Digit_0_Ancor_D", AncorSide.D) })
         {
             var gate = GameObject.Find(entry.Item1).GetComponent<EquationGate>();
             Assert.IsNotNull(gate);

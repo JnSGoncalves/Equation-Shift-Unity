@@ -29,13 +29,22 @@ public class G2GateTests
 
         var blocks = board.GetComponentsInChildren<GridPushBlock>();
         var four = blocks.Single(block => block.Value == '4');
-        var equals = blocks.Single(block => block.Value == '=');
+        Vector3Int target = gate.Ancor.Cell + Vector3Int.left * 2;
+        Assert.IsTrue(four.IsMovable);
+        Assert.AreEqual(target.x, four.Cell.x);
+        int steps = Mathf.Abs(target.y - four.Cell.y);
+        Assert.Greater(steps, 0);
+        Vector2Int push = target.y > four.Cell.y ? Vector2Int.up : Vector2Int.down;
         Physics2D.SyncTransforms();
-        Assert.IsTrue(four.TryMove(Vector2Int.right));
-        Assert.IsTrue(equals.TryMove(Vector2Int.down));
-        yield return new WaitForSeconds(0.3f);
+        Assert.IsTrue(player.TeleportToCell(four.Cell - new Vector3Int(push.x, push.y, 0)));
+        Physics2D.SyncTransforms();
+        for (int step = 0; step < steps; step++)
+        {
+            Assert.IsTrue(player.TryMove(push));
+            yield return new WaitUntil(() => !four.IsMoving && !player.IsMoving);
+        }
         Assert.IsTrue(validator.ValidateEquations());
-        Assert.IsTrue(validator.Results.Any(result => result.IsTrue && result.Expression == "4-1+3=6" && result.Contains(gate.Ancor)));
+        Assert.IsTrue(validator.Results.Any(result => result.IsTrue && result.Expression == "2+4=6" && result.Contains(gate.Ancor)));
         Assert.IsTrue(gate.IsOpening);
         Assert.IsTrue(player.IsMovementLocked);
         Assert.IsTrue(camera.GetComponent<GateOpeningFeedback>().IsPlaying);

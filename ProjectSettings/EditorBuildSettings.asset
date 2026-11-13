@@ -15,26 +15,80 @@ EditorBuildSettings:
     path: Assets/Scenes/A0-FaseExemplo_2.unity
     guid: e07c181b5a0581349ac962ba25ccb154
   - enabled: 1
+    path: Assets/Scenes/G1-Fase_1.unity
+    guid: ecc35793eba03bb42b60170de38cdc61
+  - enabled: 1
     path: Assets/Scenes/G2-Fase_2.unity
     guid: 69a4249a3896c28469f892f7f8ebad75
   - enabled: 1
     path: Assets/Scenes/G3-Fase_3.unity
     guid: 3a65ec4bb30f636498b40fde5baa5c4c
   - enabled: 1
-    path: Assets/Scenes/G4-Fase_4.unity
+    path: Assets/Scenes/H3-Fase_4.unity
+    guid: e264b4770e3c4034fbfdf630acdb5d2b
+  - enabled: 1
+    path: Assets/Scenes/G4-Fase_5.unity
     guid: 57bdf746f682b084b855f1485ce7bd02
   - enabled: 1
-    path: Assets/Scenes/G5-Fase_5.unity
+    path: Assets/Scenes/G5-Fase_6.unity
     guid: e4361229ba2fdf948bfcc235c7233a09
   - enabled: 1
-    path: Assets/Scenes/G6-Fase_6.unity
+    path: Assets/Scenes/G6-Fase_7.unity
     guid: cfeb0aef480b1c24e97994371f3eb836
   - enabled: 1
-    path: Assets/Scenes/G7-Fase_7.unity
+    path: Assets/Scenes/F6-Fase_8.unity
+    guid: 8c6cc7bb94265e44ea2c2d0e3c1486b7
+  - enabled: 1
+    path: Assets/Scenes/E6-Fase_9.unity
+    guid: 654385478d056f34da09d53704b01f0b
+  - enabled: 1
+    path: Assets/Scenes/D6-Fase_10.unity
+    guid: bdaee8e359b856d40b8fed15c473512b
+  - enabled: 1
+    path: Assets/Scenes/G7-Fase_11.unity
     guid: b7c8187d4b7463b46ac22eb885a686c2
   - enabled: 1
-    path: Assets/Scenes/H3-Fase_6.unity
-    guid: e264b4770e3c4034fbfdf630acdb5d2b
+    path: Assets/Scenes/E5-Fase_12.unity
+    guid: 7b4384f77319508438413497b45c545c
+  - enabled: 1
+    path: Assets/Scenes/E4-Fase_13.unity
+    guid: b9c702cc40671684e9115c3a994f2d02
+  - enabled: 1
+    path: Assets/Scenes/D4-Fase_14.unity
+    guid: b28774cdc7c49e34e979877b22909e66
+  - enabled: 1
+    path: Assets/Scenes/C4-Fase_15.unity
+    guid: d66e29ced90ea154baeae5ed67bded8a
+  - enabled: 1
+    path: Assets/Scenes/B4-Fase_16.unity
+    guid: db1b11993351e484f814a1a5ba48e8e9
+  - enabled: 1
+    path: Assets/Scenes/B5-Fase_17.unity
+    guid: 871d4435ef4145e4e8ef6f719c82bb73
+  - enabled: 1
+    path: Assets/Scenes/B6-Fase_18.unity
+    guid: 7ae0b775ec0362a49be1d84d91abe631
+  - enabled: 1
+    path: Assets/Scenes/B7-Fase_19.unity
+    guid: 84e4b98a528ffcd47bbcfc694c102917
+  - enabled: 1
+    path: Assets/Scenes/C7-Fase_20.unity
+    guid: 0d10e2fa33d2e2d45be8db9182f1d327
+  - enabled: 1
+    path: Assets/Scenes/D7-Fase_21.unity
+    guid: e8a9247e3b295584082e8f9c14d727b5
+  - enabled: 1
+    path: Assets/Scenes/C6-Fase_22.unity
+    guid: 754c4c291e000c647a4abe297b50be82
+  - enabled: 1
+    path: Assets/Scenes/B3-Fase_23.unity
+    guid: c2a9dfdaaf9d56143a725aa7452fc9a4
+  - enabled: 1
+    path: Assets/Scenes/B2-Fase_24.unity
+    guid: d12870059b03be349b25bcc4b556e5c5
+  - enabled: 1
+    path: Assets/Scenes/C2-Fase_25.unity
+    guid: ee14eac8ac60aec4b97170afa2b422ca
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0

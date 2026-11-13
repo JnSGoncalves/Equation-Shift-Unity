@@ -33,9 +33,9 @@ public static class GateExampleSetup
         feedback.Configure(player);
         EditorUtility.SetDirty(feedback);
 
-        ConfigureGate("Gate_Vertical", "block_2_Ancor_L", AncorSide.L,
+        ConfigureGate("Gate_Vertical", "Block_Static_Digit_2_Ancor_L", AncorSide.L,
             "gate-vertical-table-20-60.png", new Vector2(1f, 3f), validator, feedback);
-        ConfigureGate("Gate_Horizontal", "block_0_Ancor_D", AncorSide.D,
+        ConfigureGate("Gate_Horizontal", "Block_Static_Digit_0_Ancor_D", AncorSide.D,
             "gate-horizontal-table-60x20.png", new Vector2(3f, 1f), validator, feedback);
         AssetDatabase.SaveAssets();
         EditorSceneManager.MarkSceneDirty(scene);
@@ -43,9 +43,10 @@ public static class GateExampleSetup
         Debug.Log("Equation Shift: ancoras, portoes, animacoes e tremores configurados na fase exemplo.");
     }
 
-    private static void ConfigureGate(string gateName, string anchorName, AncorSide side,
+    private static void ConfigureGate(string prefabName, string anchorName, AncorSide side,
         string textureName, Vector2 size, EquationValidator validator, GateOpeningFeedback feedback)
     {
+        string gateName = prefabName + "_" + side;
         var actor = GameObject.Find(gateName);
         var anchorObject = GameObject.Find(anchorName);
         if (actor == null || anchorObject == null)
@@ -63,11 +64,11 @@ public static class GateExampleSetup
         Sprite[] frames = AssetDatabase.LoadAllAssetsAtPath("Assets/Texture/animations/" + textureName)
             .OfType<Sprite>().OrderBy(sprite => sprite.rect.x).ToArray();
         if (frames.Length != 8) throw new InvalidOperationException(textureName + ": esperados 8 quadros de abertura.");
-        var closed = SaveClip(gateName + "_Closed", new[] { frames[0] });
-        var opening = SaveClip(gateName + "_Opening", frames);
-        var open = SaveClip(gateName + "_Open", new[] { frames[frames.Length - 1] });
-        var closing = SaveClip(gateName + "_Closing", frames.Reverse().ToArray());
-        var controller = SaveController(gateName, closed, opening, open, closing);
+        var closed = SaveClip(prefabName + "_Closed", new[] { frames[0] });
+        var opening = SaveClip(prefabName + "_Opening", frames);
+        var open = SaveClip(prefabName + "_Open", new[] { frames[frames.Length - 1] });
+        var closing = SaveClip(prefabName + "_Closing", frames.Reverse().ToArray());
+        var controller = SaveController(prefabName, closed, opening, open, closing);
 
         var renderer = actor.GetComponent<SpriteRenderer>();
         renderer.sprite = frames[0];
@@ -90,15 +91,18 @@ public static class GateExampleSetup
         Vector3 position = actor.transform.localPosition;
         try
         {
+            actor.name = prefabName;
             actor.transform.localPosition = Vector3.zero;
             gate.Configure(null, null, side, null, opening, closing);
-            PrefabUtility.SaveAsPrefabAssetAndConnect(actor, PrefabFolder + "/" + gateName + ".prefab",
+            PrefabUtility.SaveAsPrefabAssetAndConnect(actor, PrefabFolder + "/" + prefabName + ".prefab",
                 InteractionMode.AutomatedAction);
         }
         finally
         {
+            actor.name = gateName;
             actor.transform.localPosition = position;
             gate.Configure(validator, anchor, side, feedback, opening, closing);
+            PrefabUtility.RecordPrefabInstancePropertyModifications(actor);
             PrefabUtility.RecordPrefabInstancePropertyModifications(actor.transform);
             PrefabUtility.RecordPrefabInstancePropertyModifications(gate);
         }

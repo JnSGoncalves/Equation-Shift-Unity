@@ -27,7 +27,7 @@ public static class TitleSceneSetup
         camera.backgroundColor = new Color32(16, 22, 29, 255);
 
         var root = new GameObject("Title Screen", typeof(TitleScreen));
-        var field = new GameObject("Drifting prefab blocks").transform;
+        var field = new GameObject("Drifting Blocks").transform;
         field.SetParent(root.transform);
         var paths = AssetDatabase.FindAssets("t:Prefab", new[] { "Assets/Prefabs/Blocks/Movable" })
             .Select(AssetDatabase.GUIDToAssetPath).OrderBy(p => p).ToArray();
@@ -38,6 +38,7 @@ public static class TitleSceneSetup
         {
             var prefab = AssetDatabase.LoadAssetAtPath<GameObject>(paths[(i * 7 + i / 9) % paths.Length]);
             var block = (GameObject)PrefabUtility.InstantiatePrefab(prefab, field);
+            block.name = $"DecorativeBlock_{i + 1:00}";
             // Decorations retain their prefab artwork, without board logic or physics.
             foreach (var behaviour in block.GetComponents<MonoBehaviour>()) Object.DestroyImmediate(behaviour);
             foreach (var collider in block.GetComponents<Collider2D>()) Object.DestroyImmediate(collider);
@@ -51,6 +52,7 @@ public static class TitleSceneSetup
             float y = (i / 9 - 2.5f) * 4f + (float)random.NextDouble() * 0.8f;
             block.transform.position = new Vector3(x, y, 0);
             block.transform.localScale = Vector3.one * (1.05f + depth * 0.3f);
+            PrefabUtility.RecordPrefabInstancePropertyModifications(block);
             PrefabUtility.RecordPrefabInstancePropertyModifications(renderer);
             PrefabUtility.RecordPrefabInstancePropertyModifications(block.transform);
             blocks[i] = block.transform;
@@ -69,7 +71,7 @@ public static class TitleSceneSetup
         var font = AssetDatabase.LoadAssetAtPath<Font>(ArtFolder + "/Monocraft.ttf");
         if (font == null) throw new System.InvalidOperationException("Monocraft.ttf ausente em " + ArtFolder);
 
-        var shade = Rect("Title contrast", canvas.transform, Vector2.zero, new Vector2(1280, 720));
+        var shade = Rect("Title Contrast", canvas.transform, Vector2.zero, new Vector2(1280, 720));
         var image = shade.gameObject.AddComponent<Image>();
         image.sprite = CreateShade();
         image.raycastTarget = false;
@@ -82,11 +84,11 @@ public static class TitleSceneSetup
         shadow.effectColor = new Color32(0, 0, 0, 220);
         shadow.effectDistance = new Vector2(5, -6);
 
-        var line = Rect("Amber rule", canvas.transform, new Vector2(0, -165), new Vector2(68, 3));
+        var line = Rect("Amber Rule", canvas.transform, new Vector2(0, -165), new Vector2(68, 3));
         line.gameObject.AddComponent<Image>().color = new Color32(206, 158, 88, 255);
-        var prompt = Label("Start prompt", canvas.transform, font, "Pressione Enter para iniciar", 19,
+        var prompt = Label("Start Prompt", canvas.transform, font, "Pressione Enter para iniciar", 19,
             new Vector2(0, -242), new Vector2(1000, 44), new Color32(175, 188, 196, 255)).gameObject.AddComponent<CanvasGroup>();
-        var curtain = Rect("Fade to game", canvas.transform, Vector2.zero, Vector2.zero);
+        var curtain = Rect("Fade To Game", canvas.transform, Vector2.zero, Vector2.zero);
         Stretch(curtain);
         curtain.gameObject.AddComponent<Image>().color = Color.black;
         var fade = curtain.gameObject.AddComponent<CanvasGroup>();

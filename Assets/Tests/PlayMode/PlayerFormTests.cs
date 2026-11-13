@@ -94,7 +94,7 @@ public class PlayerFormTests
     public void EveryFormPlaysItsFourSlicedSpritesAndLoops()
     {
         var sprites = AssetDatabase.LoadAllAssetsAtPath(
-            "Assets/Texture/animations/characters/player_animations_80x100.png")
+            "Assets/Texture/animations/characters/player_animations_80x100_2.png")
             .OfType<Sprite>().ToDictionary(sprite => sprite.name);
         Assert.AreEqual(PlayerForm.Default, player.CurrentForm);
         var forms = new[] { PlayerForm.Default, PlayerForm.Equal, PlayerForm.Plus,
@@ -115,11 +115,11 @@ public class PlayerFormTests
 
             for (int frame = 0; frame < 4; frame++)
             {
-                Assert.AreSame(sprites["player_animations_80x100_" + (formIndex * 4 + frame)],
+                Assert.AreSame(sprites["player_animations_80x100_2_" + (formIndex * 4 + frame)],
                     spriteRenderer.sprite, form + " frame " + frame);
                 animator.Update(1f / 12f + 0.0001f);
             }
-            Assert.AreSame(sprites["player_animations_80x100_" + (formIndex * 4)],
+            Assert.AreSame(sprites["player_animations_80x100_2_" + (formIndex * 4)],
                 spriteRenderer.sprite, form + " loops back to its first frame");
         }
     }
@@ -136,20 +136,20 @@ public class PlayerFormTests
         player.gameObject.SetActive(true);
         Assert.AreEqual(PlayerForm.Mult, player.CurrentForm);
         Assert.IsTrue(animator.GetCurrentAnimatorStateInfo(0).IsName("Base Layer.player_mult_idle"));
-        Assert.AreEqual("player_animations_80x100_16", spriteRenderer.sprite.name);
+        Assert.AreEqual("player_animations_80x100_2_16", spriteRenderer.sprite.name);
 
         serialized.Update();
         serialized.FindProperty("currentForm").enumValueIndex = (int)PlayerForm.Divis;
         serialized.ApplyModifiedPropertiesWithoutUndo();
         yield return null;
         Assert.IsTrue(animator.GetCurrentAnimatorStateInfo(0).IsName("Base Layer.player_divis_idle"));
-        CollectionAssert.Contains(new[] { "player_animations_80x100_20", "player_animations_80x100_21",
-            "player_animations_80x100_22", "player_animations_80x100_23" }, spriteRenderer.sprite.name);
+        CollectionAssert.Contains(new[] { "player_animations_80x100_2_20", "player_animations_80x100_2_21",
+            "player_animations_80x100_2_22", "player_animations_80x100_2_23" }, spriteRenderer.sprite.name);
 
         player.gameObject.SetActive(false);
         player.gameObject.SetActive(true);
         Assert.IsTrue(animator.GetCurrentAnimatorStateInfo(0).IsName("Base Layer.player_divis_idle"));
-        Assert.AreEqual("player_animations_80x100_20", spriteRenderer.sprite.name);
+        Assert.AreEqual("player_animations_80x100_2_20", spriteRenderer.sprite.name);
     }
 
     [UnityTest]

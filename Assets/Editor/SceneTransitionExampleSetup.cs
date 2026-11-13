@@ -29,8 +29,8 @@ public static class SceneTransitionExampleSetup
         if (hasPrefab) PrefabUtility.UnloadPrefabContents(template);
         else Object.DestroyImmediate(template);
 
-        ConfigurePortal(FirstScene, "Exit_Bottom_To_A0", "A0", new Vector3Int(-1, -9, 0), Vector2Int.up);
-        ConfigurePortal(SecondScene, "Exit_Top_To_00", "00", new Vector3Int(-1, 8, 0), Vector2Int.down);
+        ConfigurePortal(FirstScene, "Exit_Bottom_To_A0", "Gate_Horizontal_D", "A0", new Vector3Int(-1, -9, 0), Vector2Int.up);
+        ConfigurePortal(SecondScene, "Exit_Top_To_00", "Gate_Horizontal_T", "00", new Vector3Int(-1, 8, 0), Vector2Int.down);
 
         var scenes = EditorBuildSettings.scenes
             .Where(scene => scene.path != "Assets/Scenes/00-FaseExemplo.unity" &&
@@ -43,7 +43,7 @@ public static class SceneTransitionExampleSetup
         Debug.Log("Equation Shift: transicao 00 <-> A0 configurada com chegadas para dentro das salas.");
     }
 
-    private static void ConfigurePortal(string path, string name, string destination, Vector3Int cell,
+    private static void ConfigurePortal(string path, string name, string gateName, string destination, Vector3Int cell,
         Vector2Int offset)
     {
         Scene scene = EditorSceneManager.OpenScene(path);
@@ -63,7 +63,7 @@ public static class SceneTransitionExampleSetup
         portal.name = name;
         Vector2 position = board.CenterOf(cell);
         portal.transform.position = new Vector3(position.x, position.y, 0f);
-        var gate = GameObject.Find("Gate_Horizontal").GetComponent<EquationGate>();
+        var gate = GameObject.Find(gateName).GetComponent<EquationGate>();
         portal.Configure(board, destination, offset, gate);
         PrefabUtility.RecordPrefabInstancePropertyModifications(portal);
         PrefabUtility.RecordPrefabInstancePropertyModifications(portal.transform);

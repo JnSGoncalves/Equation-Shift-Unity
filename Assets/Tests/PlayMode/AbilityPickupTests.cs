@@ -8,6 +8,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
 using UnityEngine.Tilemaps;
+using UnityEngine.UI;
 
 public class AbilityPickupTests
 {
@@ -72,6 +73,7 @@ public class AbilityPickupTests
     [TearDown]
     public void TearDown()
     {
+        VillageDialogue.Hide();
         Object.DestroyImmediate(root);
         Object.DestroyImmediate(tile);
     }
@@ -110,6 +112,7 @@ public class AbilityPickupTests
         yield return new WaitForSeconds(pickup.CollectionDuration * 0.4f);
         Assert.IsFalse(player.IsFormUnlocked(form));
         Assert.AreEqual(PlayerForm.Default, player.CurrentForm, "The form stays unchanged during the animation");
+        Assert.IsFalse(VillageDialogue.IsVisible);
         yield return new WaitForSeconds(pickup.CollectionDuration * 0.7f);
         Assert.IsTrue(pickup == null);
         Assert.AreEqual(PlayerForm.Default, formWhenHidden, "The item must disappear before the player transforms");
@@ -119,6 +122,9 @@ public class AbilityPickupTests
         Assert.IsTrue(player.IsFormUnlocked(form));
         Assert.AreEqual(1, player.UnlockedForms.Count);
         Assert.AreEqual(form, player.CurrentForm);
+        Assert.IsTrue(VillageDialogue.IsVisible);
+        var dialogue = Object.FindFirstObjectByType<VillageDialogue>();
+        Assert.AreEqual("Use Tab para trocar de forma.", dialogue.GetComponentInChildren<Text>().text);
         player.CycleForm();
         Assert.AreEqual(PlayerForm.Default, player.CurrentForm);
         player.CycleForm();

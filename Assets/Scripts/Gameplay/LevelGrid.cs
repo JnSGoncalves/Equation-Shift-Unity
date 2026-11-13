@@ -46,8 +46,11 @@ namespace EquationShift
             Vector2 size = self.bounds.size;
             foreach (Collider2D hit in Physics2D.OverlapBoxAll(CenterOf(cell), size * 0.98f, 0f))
             {
-                if (hit == self || hit == ignored || hit.isTrigger) continue;
-                return true;
+                if (hit == self || hit == ignored) continue;
+                if (!hit.isTrigger) return true;
+                // A required-form gate can be temporarily open to receive the player from another room.
+                if (hit.TryGetComponent(out ScenePortal portal) && portal.isActiveAndEnabled &&
+                    portal.Board == this && CellAt(portal.transform.position) == cell && portal.IsExitBlocked) return true;
             }
             return false;
         }

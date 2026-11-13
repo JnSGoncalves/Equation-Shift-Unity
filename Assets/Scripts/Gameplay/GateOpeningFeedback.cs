@@ -21,9 +21,12 @@ namespace EquationShift
         private EquationGate activeGate;
         private Vector3 appliedOffset;
         private Vector3 shakeOffset;
+        private float quickShakeElapsed = float.PositiveInfinity;
 
         public bool IsPlaying { get; private set; }
+        internal bool IsQuickShaking => quickShakeElapsed < quickShakeDuration;
         public void Configure(TopDownGridPlayer controller) => player = controller;
+        internal void PlayQuickShake() => quickShakeElapsed = 0f;
 
         internal bool Enqueue(EquationGate gate)
         {
@@ -71,19 +74,30 @@ namespace EquationShift
             float elapsed = 0f;
             while (elapsed < duration && activeGate != null && activeGate.isActiveAndEnabled && activeGate.IsFeedbackTransition)
             {
-                float envelope = Mathf.Sin(Mathf.PI * Mathf.Clamp01(elapsed / duration));
-                float phase = elapsed * frequency * Mathf.PI * 2f;
-                shakeOffset = new Vector3(Mathf.Sin(phase), Mathf.Sin(phase * 1.37f + 0.6f), 0f) * amplitude * envelope;
+                shakeOffset = ShakeOffset(elapsed, duration, amplitude, frequency);
                 yield return null;
                 elapsed += Time.unscaledDeltaTime;
             }
             shakeOffset = Vector3.zero;
         }
 
+        private static Vector3 ShakeOffset(float elapsed, float duration, float amplitude, float frequency)
+        {
+            float envelope = Mathf.Sin(Mathf.PI * Mathf.Clamp01(elapsed / duration));
+            float phase = elapsed * frequency * Mathf.PI * 2f;
+            return new Vector3(Mathf.Sin(phase), Mathf.Sin(phase * 1.37f + 0.6f), 0f) * amplitude * envelope;
+        }
+
         private void LateUpdate()
         {
             transform.localPosition -= appliedOffset;
             appliedOffset = shakeOffset;
+            if (IsQuickShaking)
+            {
+                if (!SceneTransition.IsTravelling)
+                    appliedOffset += ShakeOffset(quickShakeElapsed, quickShakeDuration, quickShakeAmplitude, quickShakeFrequency);
+                quickShakeElapsed += Time.unscaledDeltaTime;
+            }
             transform.localPosition += appliedOffset;
         }
 
@@ -101,6 +115,7 @@ namespace EquationShift
                 if (gate != null) gate.CancelFeedbackTransition();
             activeGate = null;
             pendingGates.Clear();
+            quickShakeElapsed = float.PositiveInfinity;
             ResetOffset();
             if (player != null) player.UnlockMovement(this);
             IsPlaying = false;

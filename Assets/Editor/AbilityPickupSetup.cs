@@ -12,8 +12,10 @@ public static class AbilityPickupSetup
 {
     private const string AnimationFolder = "Assets/Animations/Abilities";
     private const string SpritePath = "Assets/Texture/animations/habilities_80x100.png";
+    private const string PickupPrefix = "AbilityPickup_";
+    private const string LegacyPickupPrefix = "habilitie_";
 
-    [MenuItem("Equation Shift/Configurar coletaveis de habilidades")]
+    [MenuItem("Equation Shift/Configurar coletaveis de transformacoes")]
     public static void ConfigureCurrentScene()
     {
         if (Application.isPlaying) throw new InvalidOperationException("Saia do Play Mode antes de configurar os coletaveis.");
@@ -40,8 +42,10 @@ public static class AbilityPickupSetup
             var player = board.GetComponentInChildren<TopDownGridPlayer>(true);
             foreach (var child in root.GetComponentsInChildren<Transform>(true))
             {
-                if (!child.name.StartsWith("habilitie_", StringComparison.OrdinalIgnoreCase)) continue;
-                if (!TryReadForm(child.name.Substring("habilitie_".Length), out var form))
+                string prefix = child.name.StartsWith(PickupPrefix, StringComparison.OrdinalIgnoreCase)
+                    ? PickupPrefix : LegacyPickupPrefix;
+                if (!child.name.StartsWith(prefix, StringComparison.OrdinalIgnoreCase)) continue;
+                if (!TryReadForm(child.name.Substring(prefix.Length), out var form))
                     throw new InvalidOperationException("Nome de coletavel desconhecido: " + child.name);
                 var pickup = child.GetComponent<AbilityPickup>();
                 if (pickup == null) pickup = child.gameObject.AddComponent<AbilityPickup>();
@@ -57,11 +61,11 @@ public static class AbilityPickupSetup
                 count++;
             }
         }
-        if (count == 0) throw new InvalidOperationException("Adicione objetos habilitie_<forma> em Grid/Interactables.");
+        if (count == 0) throw new InvalidOperationException("Adicione objetos AbilityPickup_<forma> em Grid/Interactables.");
         AssetDatabase.SaveAssets();
         EditorSceneManager.MarkSceneDirty(scene);
         EditorSceneManager.SaveScene(scene);
-        Debug.Log("Equation Shift: " + count + " coletaveis de habilidades configurados; posicoes preservadas.");
+        Debug.Log("Equation Shift: " + count + " coletáveis de transformações configurados.");
     }
 
     private static bool TryReadForm(string token, out PlayerForm form)

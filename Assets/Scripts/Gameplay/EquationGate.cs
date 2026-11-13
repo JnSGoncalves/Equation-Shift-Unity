@@ -16,11 +16,16 @@ namespace EquationShift
         [SerializeField, Tooltip("Estado inicial; alterar durante Play anima a abertura ou o fechamento.")]
         private bool isOpen;
         [SerializeField] private Collider2D[] blockingColliders;
+        [SerializeField, Tooltip("IDs das alavancas exigidas para abrir este portao. Vazio usa a equacao da ancora.")]
+        private string[] requiredLeverIds;
+        [SerializeField, Tooltip("Forma que o Player deve usar como parte da equacao. Default aceita contas feitas apenas com blocos.")]
+        private PlayerForm requiredPlayerForm;
 
         private Animator animator;
         private EquationValidator subscribedValidator;
         private Coroutine stateChange;
         private bool requestedOpen;
+        private bool requiredFormSatisfied;
         private TopDownGridPlayer arrivingPlayer;
 
         public GridPushBlock Ancor => ancor;
@@ -32,7 +37,9 @@ namespace EquationShift
         public bool IsWaitingForArrivalExit => arrivingPlayer != null;
         public bool IsOpening { get; private set; }
         public bool IsClosing { get; private set; }
+        private bool UsesLevers => requiredLeverIds != null && requiredLeverIds.Length > 0;
         internal bool IsFeedbackTransition { get; private set; }
+        internal bool BlocksPortal => !UsesLevers && requiredPlayerForm != PlayerForm.Default && !requiredFormSatisfied;
         internal bool FeedbackOpens { get; private set; }
         internal float FeedbackDuration => FeedbackOpens ? OpeningDuration : ClosingDuration;
         public bool IsOpen
@@ -58,6 +65,7 @@ namespace EquationShift
         private void Awake()
         {
             DefaultIsOpen = isOpen;
+            if (UsesLevers) isOpen = AreRequiredLeversActivated();
             animator = GetComponent<Animator>();
             if (blockingColliders == null || blockingColliders.Length == 0)
                 blockingColliders = GetComponentsInChildren<Collider2D>(true);
@@ -66,6 +74,11 @@ namespace EquationShift
 
         private void OnEnable()
         {
+            if (UsesLevers)
+            {
+                RoomLever.Activated += CheckLevers;
+                if (AreRequiredLeversActivated()) isOpen = true;
+            }
             ApplyConfiguredState();
             Subscribe();
         }
@@ -73,6 +86,7 @@ namespace EquationShift
         internal void RefreshSolution() => CheckSolution(validator);
         private void OnDisable()
         {
+            RoomLever.Activated -= CheckLevers;
             Unsubscribe();
             if (stateChange != null) StopCoroutine(stateChange);
             stateChange = null;
@@ -94,7 +108,7 @@ namespace EquationShift
         public void OpenForArrival(TopDownGridPlayer player)
         {
             SetOpen(true, false);
-            if (!DefaultIsOpen) arrivingPlayer = player;
+            if (!DefaultIsOpen && !requiredFormSatisfied && !AreRequiredLeversActivated()) arrivingPlayer = player;
         }
 
         private bool OverlapsArrivalPlayer()
@@ -162,6 +176,7 @@ namespace EquationShift
 
         private void Subscribe()
         {
+            if (UsesLevers) return;
             if (validator == null)
             {
                 var grid = GetComponentInParent<LevelGrid>();
@@ -180,17 +195,41 @@ namespace EquationShift
 
         private void CheckSolution(EquationValidator source)
         {
-            if (SceneTransition.IsTravelling || !isActiveAndEnabled || IsOpen || IsOpening || IsClosing || source == null ||
+            if (UsesLevers || SceneTransition.IsTravelling || !isActiveAndEnabled || (IsOpen && !BlocksPortal) ||
+                IsOpening || IsClosing || source == null ||
                 source.IsWaitingForBlocks || !string.IsNullOrEmpty(source.ValidationError) ||
                 ancor == null || !ancor.isActiveAndEnabled || !ancor.IsAncor || ancor.AncorSide != passageSide) return;
 
             foreach (EquationResult equation in source.Results)
             {
                 if (!equation.IsTrue || !equation.Contains(ancor)) continue;
+                if (requiredPlayerForm != PlayerForm.Default &&
+                    (equation.ParticipatingPlayer == null || equation.ParticipatingPlayer.CurrentForm != requiredPlayerForm)) continue;
                 if (feedback == null || !feedback.isActiveAndEnabled) return;
+                if (IsOpen)
+                {
+                    requiredFormSatisfied = true;
+                    arrivingPlayer = null;
+                    return;
+                }
                 TryQueueFeedback(true);
                 return;
             }
+        }
+
+        private bool AreRequiredLeversActivated()
+        {
+            if (!UsesLevers) return false;
+            foreach (string id in requiredLeverIds)
+                if (!RoomLever.IsIdActivated(id)) return false;
+            return true;
+        }
+
+        private void CheckLevers()
+        {
+            if (!AreRequiredLeversActivated()) return;
+            arrivingPlayer = null;
+            if (IsClosing || (!IsOpen && !IsOpening)) SetOpen(true);
         }
 
         private bool TryQueueFeedback(bool open)
@@ -215,6 +254,7 @@ namespace EquationShift
         internal void CompleteFeedbackTransition()
         {
             if (!IsFeedbackTransition) return;
+            if (FeedbackOpens && requiredPlayerForm != PlayerForm.Default) requiredFormSatisfied = true;
             isOpen = requestedOpen = FeedbackOpens;
             IsFeedbackTransition = IsOpening = IsClosing = false;
             ApplyConfiguredState();

@@ -14,7 +14,7 @@ namespace EquationShift
         {
             if (IsTravelling || portal == null || player == null || !portal.isActiveAndEnabled ||
                 player.IsMoving || player.IsMovementLocked || player.Board != portal.Board ||
-                portal.gameObject.scene != player.gameObject.scene) return false;
+                portal.gameObject.scene != player.gameObject.scene || portal.IsExitBlocked) return false;
             if (!ScenePortal.TryResolveScene(portal.DestinationSceneId, out string destinationPath))
             {
                 RoomUnavailableNotice.Show();

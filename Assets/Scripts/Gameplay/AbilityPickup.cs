@@ -92,6 +92,7 @@ namespace EquationShift
             if (target == null) yield break;
             target.UnlockForm(collectedForm);
             target.CurrentForm = collectedForm;
+            VillageDialogue.Show("Use Tab para trocar de forma.");
         }
 
         private void ApplyCollectionProgress(float progress)

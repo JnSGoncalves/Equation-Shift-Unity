@@ -198,7 +198,7 @@ public class SceneTransitionTests
         yield return null;
         var player = Object.FindFirstObjectByType<TopDownGridPlayer>();
         var exit = Object.FindFirstObjectByType<ScenePortal>();
-        var gate = GameObject.Find("Gate_Horizontal").GetComponent<EquationGate>();
+        var gate = GameObject.Find("Gate_Horizontal_D").GetComponent<EquationGate>();
         Assert.AreEqual("A0", exit.DestinationSceneId);
         Assert.IsTrue(exit.GetComponent<Collider2D>().isTrigger);
         Assert.IsNull(exit.GetComponent<SpriteRenderer>());
@@ -233,7 +233,7 @@ public class SceneTransitionTests
         player = Object.FindFirstObjectByType<TopDownGridPlayer>();
         Assert.AreEqual(new Vector3Int(-1, -8, 0), player.Cell);
         Assert.AreEqual(PlayerForm.Mult, player.CurrentForm);
-        Assert.IsTrue(GameObject.Find("Gate_Horizontal").GetComponent<EquationGate>().IsOpen);
+        Assert.IsTrue(GameObject.Find("Gate_Horizontal_D").GetComponent<EquationGate>().IsOpen);
     }
 
     [UnityTest]
@@ -366,7 +366,7 @@ public class SceneTransitionTests
             Assert.AreEqual(3, Object.FindObjectsByType<ScenePortal>(FindObjectsSortMode.None).Length);
             Assert.AreEqual(expectedArrival, Object.FindFirstObjectByType<TopDownGridPlayer>().Cell,
                 "Only the exit pointing back to the origin room is the counterpart");
-            Assert.IsTrue(GameObject.Find("Gate_Horizontal").GetComponent<EquationGate>().IsOpen);
+            Assert.IsTrue(GameObject.Find("Gate_Horizontal_T").GetComponent<EquationGate>().IsOpen);
         }
         finally { SceneManager.sceneLoaded -= prepareDestination; }
     }
@@ -463,7 +463,7 @@ public class SceneTransitionTests
             Assert.IsTrue(player.CanStandAt(player.Cell));
             Assert.IsFalse(player.IsMoving);
             Assert.IsFalse(player.IsMovementLocked);
-            var destinationGate = GameObject.Find("Gate_Horizontal").GetComponent<EquationGate>();
+            var destinationGate = GameObject.Find("Gate_Horizontal_T").GetComponent<EquationGate>();
             Assert.IsFalse(destinationGate.IsOpen || destinationGate.IsWaitingForArrivalExit,
                 "Fallback must leave the unused gate in its configured closed state");
         }

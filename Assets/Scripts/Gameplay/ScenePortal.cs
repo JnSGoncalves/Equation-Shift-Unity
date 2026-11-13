@@ -37,6 +37,7 @@ namespace EquationShift
             }
         }
         public LevelGrid Board => board != null ? board : board = GetComponentInParent<LevelGrid>();
+        internal bool IsExitBlocked => ArrivalGate is EquationGate gate && gate.BlocksPortal;
 
         public void Configure(LevelGrid grid, string destination, Vector2Int arrivalOffset,
             EquationGate gate = null)

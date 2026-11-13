@@ -14,6 +14,7 @@ using Object = UnityEngine.Object;
 public static class BlockPrefabSetup
 {
     private const string PrefabRoot = "Assets/Prefabs/Blocks";
+    private const string DuplicateSuffix = @"(?:\s+\(\d+\)|_\d{2,})";
 
     [MenuItem("Equation Shift/Padronizar blocos e criar prefabs")]
     public static void ConfigureAllScenes()
@@ -100,7 +101,7 @@ public static class BlockPrefabSetup
         var oldBlock = actor.GetComponent<GridPushBlock>();
         bool sceneAncor = oldBlock != null && oldBlock.IsAncor;
         AncorSide sceneSide = oldBlock != null ? oldBlock.AncorSide : AncorSide.T;
-        Match ancorSuffix = Regex.Match(sceneName, @"_Ancor_([TDLR])(?:\s+\(\d+\))?$", RegexOptions.IgnoreCase);
+        Match ancorSuffix = Regex.Match(sceneName, @"_Ancor_([TDLR])" + DuplicateSuffix + "?$", RegexOptions.IgnoreCase);
         if (ancorSuffix.Success)
         {
             sceneAncor = true;
@@ -180,8 +181,10 @@ public static class BlockPrefabSetup
 
     private static bool TryReadValue(string name, out char value, out string token)
     {
-        string suffix = Regex.Replace(name.Trim(), @"\s+\(\d+\)$", "").Substring("block_".Length).ToLowerInvariant();
+        string suffix = name.Trim().Substring("block_".Length).ToLowerInvariant();
+        suffix = Regex.Replace(suffix, DuplicateSuffix + "$", "");
         suffix = Regex.Replace(suffix, @"_ancor_[tdlr]$", "");
+        suffix = Regex.Replace(suffix, @"^(?:static|movable)_(?:digit|operator)_", "");
         if (suffix.Length == 1 && suffix[0] >= '0' && suffix[0] <= '9')
         {
             value = suffix[0];

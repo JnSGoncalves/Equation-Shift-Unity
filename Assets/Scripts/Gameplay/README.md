@@ -6,12 +6,12 @@ Abra `Assets/Scenes/00-FaseExemplo_1.unity` e entre em Play.
 
 - **WASD ou setas:** anda em quatro direções, uma célula por passo. Segurar repete os passos; toques rápidos são registrados entre atualizações de física.
 - **Tab:** troca a forma uma vez por pressionamento, no ciclo `Default → Equal → Plus → Minus → Mult → Divis → Default`, pulando as formas ainda não coletadas. O Player começa somente com `Default`.
-- **Coletar habilidade:** termine um passo na célula de um objeto `habilitie_<forma>` em `Grid/Interactables` para liberar aquela transformação.
+- **Coletar transformação** exige terminar um passo na célula de um objeto `AbilityPickup_<forma>` em `Grid/Interactables`.
 - **Empurrar:** caminhe contra um bloco com `Is Movable` habilitado. O personagem ocupa a célula anterior do bloco enquanto ele avança uma célula na mesma direção.
-- **R:** restaura os blocos às posições e valores iniciais da sala e devolve o Player à entrada usada na última transição. Na primeira sala, usa a posição inicial da cena. O portão da entrada abre para receber o Player e aguarda sua saída antes de fechar novamente. Cancela passos em andamento e revalida as contas. As habilidades já obtidas, inclusive em salas anteriores, e a forma selecionada são preservadas. O reset aguarda o fim de transições e animações que bloqueiam o movimento; pressione R novamente quando terminarem. Por código, use `TopDownGridPlayer.TryResetLevel()`.
+- **R:** restaura os blocos às posições e valores iniciais da sala e devolve o Player à entrada usada na última transição. Na primeira sala, usa a posição inicial da cena. O portão da entrada abre para receber o Player e aguarda sua saída antes de fechar novamente. Cancela passos em andamento e revalida as contas. As transformações já obtidas, inclusive em salas anteriores, e a forma selecionada são preservadas. O reset aguarda o fim de transições e animações que bloqueiam o movimento; pressione R novamente quando terminarem. Por código, use `TopDownGridPlayer.TryResetLevel()`.
 - Paredes, ausência de chão, outros blocos e outros colliders sólidos impedem o movimento. Não há empurrão em cadeia ou movimento diagonal.
 
-O movimento em células segue o GDD. Espaço e Shift ficam disponíveis para as futuras habilidades.
+O movimento em células segue o GDD.
 
 ## Componentes
 
@@ -27,15 +27,15 @@ O movimento em células segue o GDD. Espaço e Shift ficam disponíveis para as 
 
 Fora de `Default`, o Player representa um símbolo nas equações: `Equal` = `=`, `Plus` = `+`, `Minus` = `-`, `Mult` = `*` e `Divis` = `/`. `TryGetEquationSymbol(out char symbol)` expõe esse símbolo e retorna `false` em `Default`. Todas as formas mantêm o mesmo movimento e empurrão.
 
-O Animator do Player usa `Assets/Animations/Player/Player.controller`, com seis estados e clipes `player_<forma>_idle.anim`. Cada clipe repete quatro frames de 20 × 20 a 12 fps, seguindo os grupos de quatro sprites de `player_animations_80x100.png`: default (0–3), equal (4–7), plus (8–11), minus (12–15), mult (16–19) e divis (20–23). A troca reinicia o clipe correspondente e atualiza o sprite imediatamente; bloquear o movimento durante a abertura dos portões não bloqueia a troca de forma.
+O prefab `Assets/Prefabs/Player.prefab` usa `Assets/Animations/Player/Player.controller`, com seis estados e clipes `player_<forma>_idle.anim`. Cada clipe repete quatro quadros de 20 × 20 a 12 fps do atlas `player_animations_80x100_2.png`, na ordem default (0–3), equal (4–7), plus (8–11), minus (12–15), mult (16–19) e divis (20–23). A troca de forma reinicia o clipe correspondente e atualiza o sprite imediatamente, inclusive durante a abertura dos portões.
 
-## Coletáveis de habilidades
+## Coletáveis de transformações
 
-Os cinco objetos `habilitie_equal`, `habilitie_minus`, `habilitie_plus`, `habilitie_mult` e `habilitie_divis` em `Grid/Interactables` têm `AbilityPickup`, `SpriteRenderer` e `Animator`. Os clipes e controladores `habilitie_<forma>_idle` ficam em `Assets/Animations/Abilities`. Os clipes usam quatro frames em loop a 12 fps do atlas `Assets/Texture/animations/habilities_80x100.png`: equal (0–3), minus (4–7), plus (8–11), mult (12–15) e divis (16–19). Essa ordem difere da ordem das formas do Player.
+Os cinco objetos `AbilityPickup_Equal`, `AbilityPickup_Minus`, `AbilityPickup_Plus`, `AbilityPickup_Mult` e `AbilityPickup_Divis` em `Grid/Interactables` têm `AbilityPickup`, `SpriteRenderer` e `Animator`. Os clipes e controladores `habilitie_<forma>_idle` ficam em `Assets/Animations/Abilities`. Os clipes usam quatro frames em loop a 12 fps do atlas `Assets/Texture/animations/habilities_80x100.png`: equal (0–3), minus (4–7), plus (8–11), mult (12–15) e divis (16–19). Essa ordem difere da ordem das formas do Player.
 
 A coleta começa automaticamente quando o Player termina o passo na célula do item. Não há collider sólido bloqueando a entrada. O item aparece uma célula do grid acima do Player, fica à frente do seu sprite e desce suavemente até ele enquanto perde opacidade. Ao terminar, o item é desativado e removido; somente no frame seguinte a forma é liberada e selecionada, atualizando o sprite e a animação do Player. Assim, o personagem ainda mantém a forma anterior quando o objeto desaparece. A transformação continua disponível pelo Tab depois disso. Durante o efeito, o Tab não pode selecionar a transformação ainda bloqueada. Coletar uma forma já liberada também a seleciona após a remoção do item, sem duplicar o desbloqueio. O efeito acompanha o Player se ele continuar andando. `Collection Duration` no Inspector define a duração (padrão: 0,8 s), e a altura respeita o tamanho da célula do grid.
 
-O menu **Equation Shift > Configurar coletaveis de habilidades** gera ou atualiza as animações e configura os objetos `habilitie_<forma>` sob `Interactables` na cena ativa, salvando-a. Ele preserva as posições definidas na cena. Para adicionar outro coletável, duplique um desses objetos e ajuste `Form`, sprite e controlador; também é possível renomeá-lo com o sufixo correto e executar o menu novamente fora do Play Mode. Os coletáveis não são blocos de equação nem recebem `GridPushBlock`.
+O menu **Equation Shift > Configurar coletaveis de transformacoes** gera ou atualiza as animações e configura os objetos `AbilityPickup_<forma>` sob `Interactables` na cena ativa, salvando-a. Ele preserva as posições definidas na cena. Para adicionar outro coletável, duplique um desses objetos e ajuste `Form`, sprite e controlador. Também é possível renomeá-lo com o sufixo correto e executar o menu novamente fora do Play Mode. Os coletáveis usam `AbilityPickup`.
 
 Para adicionar outro bloco, duplique um dos blocos sob `Grid/Blocks` e posicione-o no centro de uma célula livre de `Ground`. Mantenha a referência ao mesmo `LevelGrid` e os componentes Rigidbody2D, BoxCollider2D e GridPushBlock. Preencha `Value` com um dígito de `0` a `9` ou um dos símbolos `+`, `-`, `*`, `/`, `=`. Os nomes `XX_Block_X` e as tags `MovableBlock`/`StaticBlock` organizam a cena; a lógica usa os campos do componente, preservando os valores mesmo quando o nome do objeto é diferente.
 
@@ -79,7 +79,7 @@ O menu **Equation Shift > Configurar Fase Exemplo** reaplica a configuração à
 
 `GridPushBlock.IsAncor` marca um bloco como âncora imóvel, mesmo se `IsMovable` estiver habilitado. `AncorSide` é um enum com `T` (Top), `D` (Down), `L` (Left) e `R` (Right). O lado identifica a passagem associada; a equação pode ser horizontal ou vertical e incluir a âncora em qualquer posição.
 
-Na fase exemplo, `block_2_Ancor_L` abre `Gate_Vertical` e `block_0_Ancor_D` abre `Gate_Horizontal`. Cada `EquationGate` tem referências explícitas à âncora, ao validador e ao `GateOpeningFeedback` da Main Camera. Ele só aceita uma equação verdadeira que contenha sua própria âncora e cujo lado corresponda ao da passagem. `EquationResult.ParticipatingBlocks` e `Contains(block)` expõem essa participação. Uma equação falsa, incompleta ou com erro não dispara tremor nem abertura.
+Na fase exemplo, `Block_Static_Digit_2_Ancor_L` abre `Gate_Vertical_L` e `Block_Static_Digit_0_Ancor_D` abre `Gate_Horizontal_D`. Cada `EquationGate` tem referências explícitas à âncora, ao validador e ao `GateOpeningFeedback` da Main Camera. Ele só aceita uma equação verdadeira que contenha sua própria âncora e cujo lado corresponda ao da passagem. `EquationResult.ParticipatingBlocks` e `Contains(block)` expõem essa participação. Uma equação falsa, incompleta ou com erro não dispara tremor nem abertura.
 
 Equações completadas pelo Player também podem abrir o portão da âncora que faz parte da mesma sequência. A forma do Player não o transforma em âncora.
 

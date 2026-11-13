@@ -6,7 +6,7 @@ Para consultar detalhes dos scripts e das animações, veja a [documentação de
 
 ## Tela de título
 
-Abra `Assets/Scenes/Title.unity` e entre no Play Mode. A cena usa Monocraft, com o título centralizado e 54 instâncias decorativas dos prefabs de blocos subindo na diagonal em velocidades diferentes. Enter, Espaço, clique/toque ou o botão principal/Start do controle iniciam `G2-Fase_2`, com uma breve transição para preto. A cena é a primeira da lista do Build.
+Abra `Assets/Scenes/Title.unity` e entre no Play Mode. A cena usa Monocraft, com o título centralizado e 54 instâncias decorativas dos prefabs de blocos subindo na diagonal em velocidades diferentes. Enter, Espaço, clique/toque ou o botão principal/Start do controle iniciam a Vila dos Sinais (`G1-Fase_1`), com uma breve transição para preto. A cena é a primeira da lista do Build.
 
 No objeto `Title Screen`, ajuste `Diagonal Velocity` para mudar a direção e a velocidade do fundo e `First Level` para escolher a fase inicial. Os blocos são apenas decorativos nessa cena: seus componentes de física e de tabuleiro foram removidos nas instâncias, preservando os prefabs originais. Para reconstruir o layout padrão, use **Equation Shift > Criar cena de titulo**; isso substitui a cena de título salva.
 
@@ -33,7 +33,7 @@ Use esta organização como referência. Os nomes dos objetos podem ajudar na or
 G2-Fase_2
 ├── Main Camera                    Camera + GateOpeningFeedback
 ├── Global Light 2D
-├── BackgroungBlack                 Fundo visual
+├── BackgroundBlack                 Fundo visual
 └── Grid                           Grid + LevelGrid + RoomScene
     ├── Ground                     Tilemap de chão
     ├── Walls                      Tilemap de paredes + TilemapCollider2D
@@ -43,11 +43,13 @@ G2-Fase_2
     │   ├── StaticBlocks            Números e operadores fixos; âncoras
     │   └── MovableBlocks           Números e operadores empurráveis
     ├── Gates                      Portões
-    ├── Interactables              Coletáveis de habilidades
+    ├── Interactables              Coletáveis de transformações
     └── Transitions                Saídas invisíveis com ScenePortal
 ```
 
 Mantenha uma câmera principal e um Player configurados em cada sala. Os blocos precisam estar dentro do grupo monitorado pelo `EquationValidator`; seguir `Grid/Blocks` evita deixar um bloco fora das contas por engano.
+
+Use nomes que identifiquem a função dos objetos, como `Block_Static_Digit_6_Ancor_R`, `Block_Movable_Operator_Plus`, `Gate_Vertical_R`, `Exit_Right_To_G3` e `AbilityPickup_Plus`. Acrescente `_02`, `_03` e assim por diante quando houver blocos com o mesmo nome no grupo.
 
 Confira estas referências depois de duplicar a cena ou adicionar objetos:
 
@@ -74,7 +76,7 @@ No grid padrão de células `1 × 1`, com origem XY em zero, os centros são pos
 
 O jogo ajusta Player e blocos ao centro da célula quando a fase começa. Posicioná-los corretamente no editor evita que sejam ajustados para uma célula diferente da pretendida.
 
-Durante o jogo, **R** restaura os blocos às posições iniciais da sala, permitindo recuperar blocos presos nas extremidades. O personagem volta à entrada por onde chegou da última sala; na primeira sala, usa a posição inicial da cena. Se o portão dessa entrada estiver fechado, ele abre para receber o personagem e volta a fechar após sua saída. As habilidades coletadas e a forma selecionada permanecem disponíveis, inclusive as trazidas de outras salas. O reset funciona automaticamente em cenas com `TopDownGridPlayer`, sem configurar outro componente.
+Durante o jogo, **R** restaura os blocos às posições iniciais da sala, permitindo recuperar blocos presos nas extremidades. O personagem volta à entrada por onde chegou da última sala; na primeira sala, usa a posição inicial da cena. Se o portão dessa entrada estiver fechado, ele abre para receber o personagem e volta a fechar após sua saída. As transformações coletadas e a forma selecionada permanecem disponíveis, inclusive as trazidas de outras salas. O reset funciona automaticamente em cenas com `TopDownGridPlayer`, sem configurar outro componente.
 
 ## 4. Editando o cenário com Tilemaps
 
@@ -158,7 +160,7 @@ Para conferir uma montagem, selecione `Blocks` e consulte `Results` no `Equation
 
 ### O Player como operador
 
-Depois de coletar uma habilidade, o Player pode representar um operador enquanto está parado na célula:
+Depois de coletar uma transformação, o Player pode representar um operador enquanto está parado na célula:
 
 | Forma | Símbolo |
 |---|---|
@@ -171,7 +173,7 @@ Depois de coletar uma habilidade, o Player pode representar um operador enquanto
 
 Por exemplo, `[1][Player em Plus][2][=][3]` forma `1+2=3`. O Player também pode completar o `=` entre dois números iguais. Durante seu movimento como operador, a validação aguarda o fim do passo.
 
-Use `Tab` para alternar entre as formas coletadas. Ao iniciar uma sala diretamente em Play, o Player começa em `Default`, sem habilidades liberadas. Ao chegar por uma transição, ele recebe as formas coletadas anteriormente. Para testar uma conta que exige uma habilidade, entre pelo caminho normal ou disponibilize o coletável necessário na fase; mudar somente o nome do Player ou escolher uma forma bloqueada não libera a habilidade.
+Use `Tab` para alternar entre as formas coletadas. Ao iniciar uma sala diretamente em Play, o Player começa em `Default`, sem transformações liberadas. Ao chegar por uma transição, ele recebe as formas coletadas anteriormente. Para testar uma conta que exige uma transformação, entre pelo caminho normal ou disponibilize o coletável necessário na fase; mudar somente o nome do Player ou escolher uma forma bloqueada não libera a transformação.
 
 ## 7. Ligando uma conta a um portão
 
@@ -204,6 +206,7 @@ No `EquationGate`, confira:
 | `Validator` | O `EquationValidator` de `Blocks` desta sala. |
 | `Ancor` | O bloco escolhido como âncora. |
 | `Passage Side` | O mesmo lado definido no `Ancor Side` da âncora. |
+| `Required Player Form` | Forma que o Player precisa usar como parte da equação. Use `Default` quando a conta puder ser feita só com blocos. |
 | `Feedback` | O `GateOpeningFeedback` da Main Camera desta sala. |
 | `Opening Animation` / `Closing Animation` | Os clipes da orientação do prefab; normalmente já vêm preenchidos. |
 | `Blocking Colliders` | Os colliders sólidos do portão; normalmente já vêm preenchidos. |
@@ -274,11 +277,11 @@ O prefab guarda uma configuração reutilizável. A instância colocada na cena 
 
 Edite o asset do prefab quando a intenção for mudar todas as suas instâncias, como corrigir o sprite, a animação ou o tamanho padrão do collider. Antes de usar `Revert`, confira os Overrides: ele pode remover o destino do portal ou a ligação da âncora que você configurou.
 
-## 10. Colocando habilidades
+## 10. Colocando transformações
 
 Duplique um coletável já configurado em `Grid/Interactables`. Confira `Form`, sprite, Animator, `Board` e Player da sala. O objeto deve ter `AbilityPickup` e não deve receber `GridPushBlock` ou um collider sólido bloqueando sua coleta.
 
-A habilidade é coletada quando o Player termina um passo na célula do item. Depois da animação, a forma fica disponível pelo `Tab`. Posicione o coletável em um local acessível antes da conta que exige aquela transformação.
+A transformação é coletada quando o Player termina um passo na célula do item. Depois da animação, o Player assume a nova forma e a dica “Use Tab para trocar de forma.” aparece. Posicione o coletável em um local acessível antes da conta que exige aquela transformação.
 
 ## 11. Dicas para criar as contas e os puzzles
 
@@ -293,7 +296,7 @@ Escolha o portão e sua âncora. Depois, monte uma conta verdadeira e confira em
 | Multiplicação | `2*3=6` | Restringir onde o operador pode ser colocado. |
 | Divisão | `8/2=4` | Exigir escolher a ordem correta dos números. |
 | Números com dois dígitos | `12+3=15` | Trabalhar a união dos dígitos em células consecutivas. |
-| Player como operador | `[2][Player em Equal][2]` | Reservar a célula central e disponibilizar a habilidade `Equal`. |
+| Player como operador | `[2][Player em Equal][2]` | Reservar a célula central e disponibilizar a transformação `Equal`. |
 
 Esses são exemplos de contas, não garantias de um puzzle solucionável: a posição inicial, as paredes e o espaço para empurrar também precisam ser testados.
 
@@ -325,7 +328,7 @@ Para criar uma fase a partir dos prefabs existentes, normalmente basta duplicar 
 | `Configurar Fase Exemplo` | Abre e salva a primeira cena de exemplo; não configura automaticamente a sala nova que estiver aberta. |
 | `Configurar portoes da Fase Exemplo` | Reconfigura os portões da primeira cena de exemplo e seus assets. |
 | `Configurar transicoes das Fases Exemplo` | Reconfigura as duas cenas de exemplo e suas conexões; não é um cadastro geral de novas salas. |
-| `Configurar coletaveis de habilidades` | Configura os coletáveis reconhecidos na cena ativa. |
+| `Configurar coletaveis de transformacoes` | Configura os coletáveis reconhecidos na cena ativa. |
 | `Padronizar blocos e criar prefabs` | Percorre as cenas de `Assets/Scenes` e processa os blocos com nomes reconhecidos `block_<valor>`, podendo atualizar cenas e prefabs. |
 
 Salve o trabalho antes de usar um desses comandos e confira seu alcance. Na edição normal, o nome do bloco não define a conta; no gerador de blocos, os nomes reconhecidos são usados para preencher os valores.
@@ -343,7 +346,7 @@ Salve o trabalho antes de usar um desses comandos e confira seu alcance. Na edi�
 | O Player aparece no centro da sala. | Contraparte ausente ou duplicada; destino de retorno errado; chegada sem chão ou sobre uma parede. |
 | A câmera desliza de forma desalinhada. | Mesma linha/coluna das saídas, `Spawn Direction`, origem e escala dos grids e enquadramento das câmeras. |
 | A transição tem problemas de iluminação ou câmera. | `RoomScene` no Grid, uma câmera principal configurada por sala e duplicação indevida de componentes. |
-| Uma transformação não fica disponível. | Coleta da habilidade; ao iniciar diretamente em Play, o Player começa sem as formas das salas anteriores. |
+| Uma transformação não fica disponível. | Coleta da transformação; ao iniciar diretamente em Play, o Player começa sem as formas das salas anteriores. |
 
 ## 14. Conferência antes de considerar a fase pronta
 
