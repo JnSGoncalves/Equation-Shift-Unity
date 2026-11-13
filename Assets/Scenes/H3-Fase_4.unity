@@ -1037,11 +1037,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 584762651749675366, guid: 448a6f0d4e266d84cb2193175da659db, type: 3}
       propertyPath: board
-      value: 
+      value:
       objectReference: {fileID: 274114920}
     - target: {fileID: 584762651749675366, guid: 448a6f0d4e266d84cb2193175da659db, type: 3}
       propertyPath: arrivalGate
-      value: 
+      value:
       objectReference: {fileID: 1155589004}
     - target: {fileID: 584762651749675366, guid: 448a6f0d4e266d84cb2193175da659db, type: 3}
       propertyPath: destinationSceneId
@@ -1132,22 +1132,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1605873439}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!4 &543129200 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 4382059823551910004, guid: 2ccf75b0902340cc8be961c16b70d672, type: 3}
-  m_PrefabInstance: {fileID: 543129203}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &543129201 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4382059823551910114, guid: 2ccf75b0902340cc8be961c16b70d672, type: 3}
-  m_PrefabInstance: {fileID: 543129203}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 19459b0849a62854e813a4de5c084bc0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: EquationShift.Gameplay::EquationShift.TopDownGridPlayer
 --- !u!1001 &543129203
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1170,13 +1154,29 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4382059823551910114, guid: 2ccf75b0902340cc8be961c16b70d672, type: 3}
       propertyPath: board
-      value: 
+      value:
       objectReference: {fileID: 274114920}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2ccf75b0902340cc8be961c16b70d672, type: 3}
+--- !u!4 &543129200 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4382059823551910004, guid: 2ccf75b0902340cc8be961c16b70d672, type: 3}
+  m_PrefabInstance: {fileID: 543129203}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &543129201 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4382059823551910114, guid: 2ccf75b0902340cc8be961c16b70d672, type: 3}
+  m_PrefabInstance: {fileID: 543129203}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 19459b0849a62854e813a4de5c084bc0, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
 --- !u!1 &543621014
 GameObject:
   m_ObjectHideFlags: 0
@@ -2672,7 +2672,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5172529745640857414, guid: 47e75409b3cdd2840bedd98a0547c002, type: 3}
       propertyPath: ancor
-      value: 
+      value:
       objectReference: {fileID: 2045000002}
     - target: {fileID: 5172529745640857414, guid: 47e75409b3cdd2840bedd98a0547c002, type: 3}
       propertyPath: feedback
@@ -2685,10 +2685,6 @@ PrefabInstance:
     - target: {fileID: 5172529745640857414, guid: 47e75409b3cdd2840bedd98a0547c002, type: 3}
       propertyPath: passageSide
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5172529745640857414, guid: 47e75409b3cdd2840bedd98a0547c002, type: 3}
-      propertyPath: requiredPlayerForm
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8729260092324863164, guid: 47e75409b3cdd2840bedd98a0547c002, type: 3}
       propertyPath: m_LocalPosition.x
@@ -2729,6 +2725,10 @@ PrefabInstance:
     - target: {fileID: 8729260092324863164, guid: 47e75409b3cdd2840bedd98a0547c002, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5172529745640857414, guid: 47e75409b3cdd2840bedd98a0547c002, type: 3}
+      propertyPath: requiredPlayerForm
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -7203,7 +7203,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1402194917105492646, guid: 80f6afd8e3b375c4ab916e7ea5dd8bd8, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 3.5
+      value: -0.5
       objectReference: {fileID: 0}
     - target: {fileID: 1402194917105492646, guid: 80f6afd8e3b375c4ab916e7ea5dd8bd8, type: 3}
       propertyPath: m_LocalPosition.y
@@ -7215,8 +7215,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3574039954803897838, guid: 80f6afd8e3b375c4ab916e7ea5dd8bd8, type: 3}
       propertyPath: board
-      value: 
+      value:
       objectReference: {fileID: 274114920}
+    - target: {fileID: 4312847938840423446, guid: 80f6afd8e3b375c4ab916e7ea5dd8bd8, type: 3}
+      propertyPath: m_Name
+      value: Block_Static_Digit_9_Ancor_T
+      objectReference: {fileID: 0}
     - target: {fileID: 3574039954803897838, guid: 80f6afd8e3b375c4ab916e7ea5dd8bd8, type: 3}
       propertyPath: isAncor
       value: 1
@@ -7224,10 +7228,6 @@ PrefabInstance:
     - target: {fileID: 3574039954803897838, guid: 80f6afd8e3b375c4ab916e7ea5dd8bd8, type: 3}
       propertyPath: ancorSide
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4312847938840423446, guid: 80f6afd8e3b375c4ab916e7ea5dd8bd8, type: 3}
-      propertyPath: m_Name
-      value: Block_Static_Digit_9_Ancor_T
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -7248,8 +7248,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 994f67b5fe0f69444911591ffa35cef7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: EquationShift.Gameplay::EquationShift.GridPushBlock
+  m_Name:
+  m_EditorClassIdentifier:
 --- !u!1001 &2045000003
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7272,7 +7272,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3574039954803897838, guid: 80f6afd8e3b375c4ab916e7ea5dd8bd8, type: 3}
       propertyPath: board
-      value: 
+      value:
       objectReference: {fileID: 274114920}
     - target: {fileID: 4312847938840423446, guid: 80f6afd8e3b375c4ab916e7ea5dd8bd8, type: 3}
       propertyPath: m_Name
