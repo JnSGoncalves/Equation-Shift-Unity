@@ -138,7 +138,9 @@ namespace EquationShift
             {
                 var next = (PlayerForm)(((int)currentForm + offset) % IdleStateHashes.Length);
                 if (!IsFormUnlocked(next)) continue;
+                if (next == currentForm) return;
                 CurrentForm = next;
+                GameAudio.Play(SoundCue.FormChange);
                 return;
             }
         }

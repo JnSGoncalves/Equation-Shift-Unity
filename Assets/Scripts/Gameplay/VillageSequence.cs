@@ -101,7 +101,11 @@ namespace EquationShift
             error.gameObject.SetActive(false);
             yield return RestoreCamera();
             escapedThisRun = true;
-            if (feedback != null) feedback.PlayQuickShake();
+            if (feedback != null)
+            {
+                GameAudio.Play(SoundCue.Tremor);
+                feedback.PlayQuickShake();
+            }
             nearbyNpc = null;
             player.UnlockMovement(this);
             escapeRoutine = null;
