@@ -2539,6 +2539,7 @@ MonoBehaviour:
   quickShakeFrequency: 35
   openingShakeAmplitude: 0.04
   openingShakeFrequency: 5
+  ambientShakeInterval: {x: 0, y: 0}
 --- !u!114 &989047465
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8816,7 +8817,7 @@ MonoBehaviour:
   dialogue: "Este port\xE3o leva \xE0s Ru\xEDnas da Matem\xE1tica. L\xE1 est\xE3o
     as fun\xE7\xF5es que regem o mundo."
   aftermathDialogue: "Voc\xEA sentiu o tremor? Pode ter acontecido algo com as fun\xE7\xF5es
-    nas ru\xEDnas."
+    nas ru\xEDnas.\nAlgu\xE9m precisa verificar isso!"
 --- !u!1001 &2051000004
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8873,7 +8874,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: EquationShift.Gameplay::EquationShift.VillageNpc
   dialogue: "O igual mant\xE9m a balan\xE7a em equil\xEDbrio. Cada lado tem de valer
     o mesmo."
-  aftermathDialogue: "Depois do tremor, nem as duas bandejas da balança pararam quietas."
+  aftermathDialogue: "Depois do tremor, nem as duas bandejas da balan\xE7a pararam
+    quietas."
 --- !u!1001 &2051000008
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8928,8 +8930,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7f31bec3cf54522ba91c8372fe74c22, type: 3}
   m_Name: 
   m_EditorClassIdentifier: EquationShift.Gameplay::EquationShift.VillageNpc
-  dialogue: "Toda solu\xE7\xE3o come\xE7a com uma boa pergunta."
-  aftermathDialogue: "O que o Error foi procurar nas ruínas?"
+  dialogue: "Toda simbolo tem um prop\xF3ito, mas qual seria o nosso?"
+  aftermathDialogue: "O que o Error foi procurar nas ru\xEDnas?"
 --- !u!1001 &2051000012
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8944,11 +8946,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8729260092324863164, guid: 9d9f24fdd3fb4995acedb3a02483e181, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -10.5
+      value: -9.5
       objectReference: {fileID: 0}
     - target: {fileID: 8729260092324863164, guid: 9d9f24fdd3fb4995acedb3a02483e181, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 4.5
+      value: 3.5
       objectReference: {fileID: 0}
     - target: {fileID: 8729260092324863164, guid: 9d9f24fdd3fb4995acedb3a02483e181, type: 3}
       propertyPath: m_LocalPosition.z
@@ -8985,7 +8987,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: EquationShift.Gameplay::EquationShift.VillageNpc
   dialogue: "Por que algumas passagens s\xF3 abrem quando a conta d\xE1 certo?"
-  aftermathDialogue: "Se o tremor veio das ruínas, o que será que mudou lá dentro?"
+  aftermathDialogue: "Se o tremor veio das ru\xEDnas, o que ser\xE1 que mudou l\xE1
+    dentro?"
 --- !u!1001 &2051000016
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -9000,7 +9003,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8729260092324863164, guid: a8ec6659ad1c4fffbae0e9f776ab5b49, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -7.5
+      value: -6.5
       objectReference: {fileID: 0}
     - target: {fileID: 8729260092324863164, guid: a8ec6659ad1c4fffbae0e9f776ab5b49, type: 3}
       propertyPath: m_LocalPosition.y
@@ -9041,7 +9044,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: EquationShift.Gameplay::EquationShift.VillageNpc
   dialogue: "Quando a vila precisa de ajuda, a gente soma for\xE7as."
-  aftermathDialogue: "Vou juntar os vizinhos e ver se todo mundo está bem."
+  aftermathDialogue: "Vou juntar os vizinhos e ver se todo mundo est\xE1 bem."
 --- !u!1001 &2051000020
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -9098,7 +9101,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: EquationShift.Gameplay::EquationShift.VillageNpc
   dialogue: "As fun\xE7\xF5es d\xE3o ordem \xE0s mudan\xE7as. Sem elas, at\xE9 uma
     soma sairia do trilho."
-  aftermathDialogue: "Se alguma função falhou, talvez as contas das ruínas tenham mudado."
+  aftermathDialogue: "Se alguma fun\xE7\xE3o falhou, talvez as contas das ru\xEDnas
+    tenham mudado."
 --- !u!1001 &2051000024
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -9113,11 +9117,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8729260092324863164, guid: 6e84f0b05b4943ec823dd3b03ba0d1e2, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -11.5
+      value: -9.5
       objectReference: {fileID: 0}
     - target: {fileID: 8729260092324863164, guid: 6e84f0b05b4943ec823dd3b03ba0d1e2, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -1.5
+      value: -2.5
       objectReference: {fileID: 0}
     - target: {fileID: 8729260092324863164, guid: 6e84f0b05b4943ec823dd3b03ba0d1e2, type: 3}
       propertyPath: m_LocalPosition.z
@@ -9154,7 +9158,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: EquationShift.Gameplay::EquationShift.VillageNpc
   dialogue: "Multiplicar \xE9 repetir uma soma sem dar tantas voltas."
-  aftermathDialogue: "Aquele tremor fez todas as janelas da praça baterem de uma vez."
+  aftermathDialogue: "Aquele tremor fez todas as janelas da pra\xE7a baterem de uma
+    vez."
 --- !u!1001 &2051000028
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -9210,7 +9215,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: EquationShift.Gameplay::EquationShift.VillageNpc
   dialogue: "J\xE1 reparou como um \xFAnico sinal pode mudar uma conta inteira?"
-  aftermathDialogue: "Vi o Error passar pelo portão. Logo depois, o chão começou a tremer."
+  aftermathDialogue: "Vi o Error passar pelo port\xE3o. Logo depois, o ch\xE3o come\xE7ou
+    a tremer."
 --- !u!1001 &2051000032
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -9266,7 +9272,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: EquationShift.Gameplay::EquationShift.VillageNpc
   dialogue: Eu divido as tarefas. Assim, cada sinal faz sua parte.
-  aftermathDialogue: "Vamos dividir as tarefas. Eu cuido da praça, você pode falar com o guarda."
+  aftermathDialogue: "Vamos dividir as tarefas. Eu cuido da pra\xE7a, voc\xEA pode
+    falar com o guarda."
 --- !u!1001 &2051000036
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -9281,7 +9288,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8729260092324863164, guid: 9680308e86604d20bbe75aef9c6fd20d, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 7.5
+      value: 5.5
       objectReference: {fileID: 0}
     - target: {fileID: 8729260092324863164, guid: 9680308e86604d20bbe75aef9c6fd20d, type: 3}
       propertyPath: m_LocalPosition.y
@@ -9322,7 +9329,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: EquationShift.Gameplay::EquationShift.VillageNpc
   dialogue: "Dividir por zero? Nem os s\xE1bios das ru\xEDnas ousam tentar."
-  aftermathDialogue: "Já ouvi histórias sobre as ruínas, mas nenhuma falava de um tremor desses."
+  aftermathDialogue: "J\xE1 ouvi hist\xF3rias sobre as ru\xEDnas, mas nenhuma falava
+    de um tremor desses."
 --- !u!1001 &2051000040
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -9379,7 +9387,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: EquationShift.Gameplay::EquationShift.VillageNpc
   dialogue: "Essa vila \xE9 muito chata! Queria fazer algo diferente s\xF3 para me
     divertir."
-  aftermathDialogue: "Eu só queria me divertir. Não achei que as ruínas fossem tremer."
+  aftermathDialogue: "Eu s\xF3 queria me divertir. N\xE3o achei que as ru\xEDnas
+    fossem tremer."
 --- !u!114 &2051000044
 MonoBehaviour:
   m_ObjectHideFlags: 0

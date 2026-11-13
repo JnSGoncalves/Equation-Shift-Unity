@@ -43,6 +43,7 @@ namespace EquationShift
         private Vector2Int queuedInput;
         private float elapsed;
         private readonly HashSet<object> movementLocks = new HashSet<object>();
+        private object cutsceneOwner;
 
         public bool IsMoving { get; private set; }
         public bool IsMovementLocked => movementLocks.Count > 0;
@@ -178,7 +179,23 @@ namespace EquationShift
         public void UnlockMovement(object owner)
         {
             if (owner != null) movementLocks.Remove(owner);
+            if (cutsceneOwner == owner) cutsceneOwner = null;
             input = queuedInput = Vector2Int.zero;
+        }
+
+        internal void LockForCutscene(object owner)
+        {
+            LockMovement(owner);
+            cutsceneOwner = owner;
+        }
+
+        internal bool TryStepAside(Vector2Int direction, object owner)
+        {
+            if (owner == null || cutsceneOwner != owner || IsMoving || !LevelGrid.IsCardinal(direction)) return false;
+            Vector3Int destination = cell + new Vector3Int(direction.x, direction.y, 0);
+            if (!CanStandAt(destination)) return false;
+            StartStep(destination);
+            return true;
         }
 
         private void Awake()
@@ -202,6 +219,7 @@ namespace EquationShift
 
         private void Update()
         {
+            if (cutsceneOwner != null) return;
             Keyboard keyboard = Keyboard.current;
             if (keyboard != null && keyboard.rKey.wasPressedThisFrame && TryResetLevel()) return;
             if (keyboard != null && keyboard.tabKey.wasPressedThisFrame) CycleForm();
@@ -237,11 +255,16 @@ namespace EquationShift
             if (board.HasObstacle(destination, shape, block != null ? block.Collider : null)) return false;
             if (block != null && !block.TryMove(direction)) return false;
 
+            StartStep(destination);
+            return true;
+        }
+
+        private void StartStep(Vector3Int destination)
+        {
             targetCell = destination;
             start = body.position;
             elapsed = 0f;
             IsMoving = true;
-            return true;
         }
 
         private void FixedUpdate()

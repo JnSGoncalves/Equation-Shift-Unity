@@ -4,6 +4,8 @@ using EquationShift;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.InputSystem.UI;
 using UnityEngine.UI;
 using Object = UnityEngine.Object;
 
@@ -86,15 +88,14 @@ public static class TitleSceneSetup
 
         var line = Rect("Amber Rule", canvas.transform, new Vector2(0, -165), new Vector2(68, 3));
         line.gameObject.AddComponent<Image>().color = new Color32(206, 158, 88, 255);
-        var prompt = Label("Start Prompt", canvas.transform, font, "Pressione Enter para iniciar", 19,
-            new Vector2(0, -242), new Vector2(1000, 44), new Color32(175, 188, 196, 255)).gameObject.AddComponent<CanvasGroup>();
+        var play = AddActionButton(canvas, font, "Jogar", root.GetComponent<TitleScreen>());
         var curtain = Rect("Fade To Game", canvas.transform, Vector2.zero, Vector2.zero);
         Stretch(curtain);
         curtain.gameObject.AddComponent<Image>().color = Color.black;
         var fade = curtain.gameObject.AddComponent<CanvasGroup>();
         fade.alpha = 0;
         fade.blocksRaycasts = false;
-        root.GetComponent<TitleScreen>().Configure(camera, blocks, prompt, fade);
+        root.GetComponent<TitleScreen>().Configure(camera, blocks, play, fade);
         EditorSceneManager.SaveScene(scene, ScenePath);
         var scenes = EditorBuildSettings.scenes.Where(s => s.path != ScenePath).ToList();
         scenes.Insert(0, new EditorBuildSettingsScene(ScenePath, true));
@@ -102,6 +103,29 @@ public static class TitleSceneSetup
         AssetDatabase.SaveAssets();
         Capture();
         Debug.Log("Equation Shift: cena Title criada com Monocraft e 54 blocos de prefab.");
+    }
+
+    private static Button AddActionButton(Canvas canvas, Font font, string caption, TitleScreen screen)
+    {
+        if (canvas.GetComponent<GraphicRaycaster>() == null) canvas.gameObject.AddComponent<GraphicRaycaster>();
+        var events = Object.FindFirstObjectByType<EventSystem>();
+        if (events == null)
+            events = new GameObject("Event System", typeof(EventSystem), typeof(InputSystemUIInputModule)).GetComponent<EventSystem>();
+
+        float width = caption.Length > 8 ? 350f : 240f;
+        var rect = Rect(caption, canvas.transform, new Vector2(0, -242), new Vector2(width, 64));
+        var image = rect.gameObject.AddComponent<Image>();
+        image.color = new Color32(206, 158, 88, 255);
+        var button = rect.gameObject.AddComponent<Button>();
+        button.targetGraphic = image;
+        var colors = button.colors;
+        colors.highlightedColor = new Color32(255, 231, 191, 255);
+        colors.pressedColor = new Color32(205, 190, 165, 255);
+        button.colors = colors;
+        var label = Label("Label", rect, font, caption, 28, Vector2.zero, Vector2.zero, new Color32(16, 22, 29, 255));
+        Stretch(label.rectTransform);
+        UnityEditor.Events.UnityEventTools.AddPersistentListener(button.onClick, screen.StartGame);
+        return button;
     }
 
     private static Sprite CreateShade()

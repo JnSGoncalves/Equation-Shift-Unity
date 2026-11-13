@@ -16,17 +16,37 @@ namespace EquationShift
         [Header("Abertura e fechamento do portao")]
         [SerializeField, Min(0f)] private float openingShakeAmplitude = 0.04f;
         [SerializeField, Min(0f)] private float openingShakeFrequency = 5f;
+        [Header("Tremor ambiente")]
+        [SerializeField, Tooltip("Intervalo em segundos de jogo. Use zero nos dois valores para desativar.")]
+        private Vector2 ambientShakeInterval = new Vector2(14f, 24f);
 
+        private const float AmbientShakeDuration = 1.3f;
         private readonly Queue<EquationGate> pendingGates = new Queue<EquationGate>();
+        private Camera roomCamera;
         private EquationGate activeGate;
         private Vector3 appliedOffset;
         private Vector3 shakeOffset;
         private float quickShakeElapsed = float.PositiveInfinity;
+        private float activeQuickShakeDuration;
+        private float ambientShakeElapsed;
+        private float timeUntilAmbientShake;
 
         public bool IsPlaying { get; private set; }
-        internal bool IsQuickShaking => quickShakeElapsed < quickShakeDuration;
+        internal bool IsQuickShaking => quickShakeElapsed < activeQuickShakeDuration;
         public void Configure(TopDownGridPlayer controller) => player = controller;
-        internal void PlayQuickShake() => quickShakeElapsed = 0f;
+        internal void PlayQuickShake() => PlayQuickShake(quickShakeDuration);
+        internal void PlayQuickShake(float duration)
+        {
+            activeQuickShakeDuration = duration;
+            quickShakeElapsed = 0f;
+        }
+
+        private void OnEnable()
+        {
+            roomCamera = GetComponent<Camera>();
+            ambientShakeElapsed = AmbientShakeDuration;
+            ScheduleAmbientShake();
+        }
 
         internal bool Enqueue(EquationGate gate)
         {
@@ -91,14 +111,42 @@ namespace EquationShift
         private void LateUpdate()
         {
             transform.localPosition -= appliedOffset;
-            appliedOffset = shakeOffset;
+            appliedOffset = shakeOffset + UpdateAmbientShake();
             if (IsQuickShaking)
             {
                 if (!SceneTransition.IsTravelling)
-                    appliedOffset += ShakeOffset(quickShakeElapsed, quickShakeDuration, quickShakeAmplitude, quickShakeFrequency);
+                    appliedOffset += ShakeOffset(quickShakeElapsed, activeQuickShakeDuration, quickShakeAmplitude, quickShakeFrequency);
                 quickShakeElapsed += Time.unscaledDeltaTime;
             }
             transform.localPosition += appliedOffset;
+        }
+
+        private void ScheduleAmbientShake()
+        {
+            float minimum = Mathf.Max(0f, ambientShakeInterval.x);
+            float maximum = Mathf.Max(minimum, ambientShakeInterval.y);
+            timeUntilAmbientShake = maximum > 0f ? Random.Range(minimum, maximum) : float.PositiveInfinity;
+        }
+
+        private Vector3 UpdateAmbientShake()
+        {
+            if (IsPlaying || IsQuickShaking || SceneTransition.IsTravelling || !roomCamera.isActiveAndEnabled ||
+                player == null || !player.isActiveAndEnabled || player.IsMovementLocked || VillageDialogue.IsVisible)
+            {
+                ambientShakeElapsed = AmbientShakeDuration;
+                return Vector3.zero;
+            }
+
+            if (ambientShakeElapsed >= AmbientShakeDuration)
+            {
+                timeUntilAmbientShake -= Time.unscaledDeltaTime;
+                if (timeUntilAmbientShake > 0f) return Vector3.zero;
+                ambientShakeElapsed = 0f;
+                ScheduleAmbientShake();
+            }
+
+            ambientShakeElapsed += Time.unscaledDeltaTime;
+            return ShakeOffset(ambientShakeElapsed, AmbientShakeDuration, 0.055f, 14f);
         }
 
         private void ResetOffset()

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 
@@ -9,6 +10,8 @@ namespace EquationShift
     {
         [SerializeField] private EquationValidator validator;
         [SerializeField] private GridPushBlock ancor;
+        [SerializeField, Tooltip("Segunda ancora opcional. As duas precisam participar da mesma equacao.")]
+        private GridPushBlock additionalAncor;
         [SerializeField] private AncorSide passageSide;
         [SerializeField] private GateOpeningFeedback feedback;
         [SerializeField] private AnimationClip openingAnimation;
@@ -25,7 +28,9 @@ namespace EquationShift
         private EquationValidator subscribedValidator;
         private Coroutine stateChange;
         private bool requestedOpen;
-        private bool requiredFormSatisfied;
+        private bool requiredSolutionSatisfied;
+        private bool hadPrimaryAnchorOnly;
+        private bool hadAdditionalAnchorOnly;
         private TopDownGridPlayer arrivingPlayer;
 
         public GridPushBlock Ancor => ancor;
@@ -39,9 +44,12 @@ namespace EquationShift
         public bool IsClosing { get; private set; }
         private bool UsesLevers => requiredLeverIds != null && requiredLeverIds.Length > 0;
         internal bool IsFeedbackTransition { get; private set; }
-        internal bool BlocksPortal => !UsesLevers && requiredPlayerForm != PlayerForm.Default && !requiredFormSatisfied;
+        private bool RequiresSolution => requiredPlayerForm != PlayerForm.Default || additionalAncor != null;
+        internal bool BlocksPortal => !UsesLevers && RequiresSolution && !requiredSolutionSatisfied;
         internal bool FeedbackOpens { get; private set; }
         internal float FeedbackDuration => FeedbackOpens ? OpeningDuration : ClosingDuration;
+        internal event Action EquationSolved;
+        internal event Action SingleAnchorEquationFound;
         public bool IsOpen
         {
             get => isOpen;
@@ -108,7 +116,7 @@ namespace EquationShift
         public void OpenForArrival(TopDownGridPlayer player)
         {
             SetOpen(true, false);
-            if (!DefaultIsOpen && !requiredFormSatisfied && !AreRequiredLeversActivated()) arrivingPlayer = player;
+            if (!DefaultIsOpen && !requiredSolutionSatisfied && !AreRequiredLeversActivated()) arrivingPlayer = player;
         }
 
         private bool OverlapsArrivalPlayer()
@@ -198,24 +206,48 @@ namespace EquationShift
             if (UsesLevers || SceneTransition.IsTravelling || !isActiveAndEnabled || (IsOpen && !BlocksPortal) ||
                 IsOpening || IsClosing || source == null ||
                 source.IsWaitingForBlocks || !string.IsNullOrEmpty(source.ValidationError) ||
-                ancor == null || !ancor.isActiveAndEnabled || !ancor.IsAncor || ancor.AncorSide != passageSide) return;
+                !IsValidAnchor(ancor) || (additionalAncor != null && !IsValidAnchor(additionalAncor))) return;
 
+            bool primaryAnchorOnly = false;
+            bool additionalAnchorOnly = false;
             foreach (EquationResult equation in source.Results)
             {
-                if (!equation.IsTrue || !equation.Contains(ancor)) continue;
+                if (!equation.IsTrue) continue;
+                bool includesPrimary = equation.Contains(ancor);
+                if (additionalAncor != null)
+                {
+                    bool includesAdditional = equation.Contains(additionalAncor);
+                    if (includesPrimary != includesAdditional)
+                    {
+                        primaryAnchorOnly |= includesPrimary;
+                        additionalAnchorOnly |= includesAdditional;
+                        continue;
+                    }
+                }
+                if (!includesPrimary) continue;
                 if (requiredPlayerForm != PlayerForm.Default &&
                     (equation.ParticipatingPlayer == null || equation.ParticipatingPlayer.CurrentForm != requiredPlayerForm)) continue;
                 if (feedback == null || !feedback.isActiveAndEnabled) return;
                 if (IsOpen)
                 {
-                    requiredFormSatisfied = true;
+                    requiredSolutionSatisfied = true;
                     arrivingPlayer = null;
+                    EquationSolved?.Invoke();
                     return;
                 }
                 TryQueueFeedback(true);
                 return;
             }
+
+            bool newSingleAnchorEquation = (primaryAnchorOnly && !hadPrimaryAnchorOnly) ||
+                (additionalAnchorOnly && !hadAdditionalAnchorOnly);
+            hadPrimaryAnchorOnly = primaryAnchorOnly;
+            hadAdditionalAnchorOnly = additionalAnchorOnly;
+            if (newSingleAnchorEquation) SingleAnchorEquationFound?.Invoke();
         }
+
+        private bool IsValidAnchor(GridPushBlock block) =>
+            block != null && block.isActiveAndEnabled && block.IsAncor && block.AncorSide == passageSide;
 
         private bool AreRequiredLeversActivated()
         {
@@ -254,10 +286,11 @@ namespace EquationShift
         internal void CompleteFeedbackTransition()
         {
             if (!IsFeedbackTransition) return;
-            if (FeedbackOpens && requiredPlayerForm != PlayerForm.Default) requiredFormSatisfied = true;
+            if (FeedbackOpens && RequiresSolution) requiredSolutionSatisfied = true;
             isOpen = requestedOpen = FeedbackOpens;
             IsFeedbackTransition = IsOpening = IsClosing = false;
             ApplyConfiguredState();
+            if (isOpen) EquationSolved?.Invoke();
         }
 
         internal void CancelFeedbackTransition()
