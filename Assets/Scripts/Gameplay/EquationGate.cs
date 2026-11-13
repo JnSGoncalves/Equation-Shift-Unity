@@ -163,7 +163,7 @@ namespace EquationShift
 
         private IEnumerator AnimateState(bool open)
         {
-            SetAnimation(open ? "Opening" : "Closing");
+            PlayGateAnimation(open);
             float duration = open ? OpeningDuration : ClosingDuration;
             yield return new WaitForSecondsRealtime(duration);
             ApplyConfiguredState();
@@ -232,6 +232,7 @@ namespace EquationShift
                 {
                     requiredSolutionSatisfied = true;
                     arrivingPlayer = null;
+                    GameAudio.Play(SoundCue.EquationCorrect);
                     EquationSolved?.Invoke();
                     return;
                 }
@@ -280,7 +281,13 @@ namespace EquationShift
         {
             if (!IsFeedbackTransition) return;
             if (!FeedbackOpens) SetCollision(true);
-            SetAnimation(FeedbackOpens ? "Opening" : "Closing");
+            PlayGateAnimation(FeedbackOpens);
+        }
+
+        private void PlayGateAnimation(bool open)
+        {
+            SetAnimation(open ? "Opening" : "Closing");
+            GameAudio.Play(open ? SoundCue.GateOpen : SoundCue.GateClose);
         }
 
         internal void CompleteFeedbackTransition()

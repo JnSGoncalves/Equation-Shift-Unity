@@ -77,7 +77,7 @@ namespace EquationShift
         public bool Occupies(Vector3Int position) =>
             cell == position || (IsMoving && targetCell == position);
 
-        // Public entry point for later abilities. Never moves diagonally or pushes a chain.
+        // A push moves one block by one cardinal grid cell.
         public bool TryMove(Vector2Int direction)
         {
             if (!isMovable || isAncor || IsMoving || !LevelGrid.IsCardinal(direction)) return false;
@@ -89,6 +89,7 @@ namespace EquationShift
             start = body.position;
             elapsed = 0f;
             IsMoving = true;
+            GameAudio.Play(SoundCue.BlockPush);
             return true;
         }
 

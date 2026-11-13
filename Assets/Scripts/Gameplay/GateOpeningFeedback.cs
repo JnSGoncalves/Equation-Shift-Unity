@@ -73,6 +73,7 @@ namespace EquationShift
                     if (activeGate != null) activeGate.CancelFeedbackTransition();
                     continue;
                 }
+                if (activeGate.FeedbackOpens) GameAudio.Play(SoundCue.EquationCorrect);
                 yield return Shake(quickShakeDuration, quickShakeAmplitude, quickShakeFrequency);
                 if (activeGate != null && activeGate.isActiveAndEnabled && activeGate.IsFeedbackTransition)
                 {
@@ -143,6 +144,7 @@ namespace EquationShift
                 if (timeUntilAmbientShake > 0f) return Vector3.zero;
                 ambientShakeElapsed = 0f;
                 ScheduleAmbientShake();
+                GameAudio.Play(SoundCue.Tremor);
             }
 
             ambientShakeElapsed += Time.unscaledDeltaTime;

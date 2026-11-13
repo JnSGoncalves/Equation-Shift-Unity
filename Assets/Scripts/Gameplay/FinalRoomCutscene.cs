@@ -61,6 +61,7 @@ namespace EquationShift
 
             if (feedback != null && feedback.isActiveAndEnabled)
             {
+                GameAudio.Play(SoundCue.Tremor);
                 feedback.PlayQuickShake(shakeDuration);
                 yield return new WaitUntil(() => !feedback.isActiveAndEnabled || !feedback.IsQuickShaking);
                 yield return null;

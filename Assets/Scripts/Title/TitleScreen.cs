@@ -56,6 +56,7 @@ namespace EquationShift
                 return;
             }
             starting = true;
+            GameAudio.Play(SoundCue.MenuConfirm);
             if (actionButton != null) actionButton.interactable = false;
             StartCoroutine(EnterLevel());
         }

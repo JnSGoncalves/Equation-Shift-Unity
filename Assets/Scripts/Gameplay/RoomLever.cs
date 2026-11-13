@@ -68,6 +68,7 @@ namespace EquationShift
             if (offset.z != 0 || !LevelGrid.IsCardinal(new Vector2Int(offset.x, offset.y))) return;
 
             ActivatedIds.Add(leverId);
+            GameAudio.Play(SoundCue.Lever);
             if (animator.runtimeAnimatorController != null) animator.SetBool(ActivatedParameter, true);
             foreach (GameObject root in gameObject.scene.GetRootGameObjects())
             {
