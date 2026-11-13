@@ -29,7 +29,7 @@ namespace EquationShift
                 }
                 instance = Instantiate(prefab).GetComponent<RoomUnavailableNotice>();
             }
-            instance.hideAt = Time.unscaledTime + instance.displayDuration;
+            instance.hideAt = Time.time + instance.displayDuration;
             instance.canvas.enabled = true;
         }
 
@@ -84,7 +84,7 @@ namespace EquationShift
 
         private void Update()
         {
-            if (IsVisible && Time.unscaledTime >= hideAt) canvas.enabled = false;
+            if (IsVisible && Time.time >= hideAt) canvas.enabled = false;
         }
 
         private void OnDestroy()

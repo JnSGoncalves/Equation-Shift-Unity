@@ -97,7 +97,7 @@ namespace EquationShift
             {
                 shakeOffset = ShakeOffset(elapsed, duration, amplitude, frequency);
                 yield return null;
-                elapsed += Time.unscaledDeltaTime;
+                elapsed += Time.deltaTime;
             }
             shakeOffset = Vector3.zero;
         }
@@ -111,13 +111,14 @@ namespace EquationShift
 
         private void LateUpdate()
         {
+            if (Time.timeScale == 0f) return;
             transform.localPosition -= appliedOffset;
             appliedOffset = shakeOffset + UpdateAmbientShake();
             if (IsQuickShaking)
             {
                 if (!SceneTransition.IsTravelling)
                     appliedOffset += ShakeOffset(quickShakeElapsed, activeQuickShakeDuration, quickShakeAmplitude, quickShakeFrequency);
-                quickShakeElapsed += Time.unscaledDeltaTime;
+                quickShakeElapsed += Time.deltaTime;
             }
             transform.localPosition += appliedOffset;
         }
@@ -140,14 +141,14 @@ namespace EquationShift
 
             if (ambientShakeElapsed >= AmbientShakeDuration)
             {
-                timeUntilAmbientShake -= Time.unscaledDeltaTime;
+                timeUntilAmbientShake -= Time.deltaTime;
                 if (timeUntilAmbientShake > 0f) return Vector3.zero;
                 ambientShakeElapsed = 0f;
                 ScheduleAmbientShake();
                 GameAudio.Play(SoundCue.Tremor);
             }
 
-            ambientShakeElapsed += Time.unscaledDeltaTime;
+            ambientShakeElapsed += Time.deltaTime;
             return ShakeOffset(ambientShakeElapsed, AmbientShakeDuration, 0.055f, 14f);
         }
 

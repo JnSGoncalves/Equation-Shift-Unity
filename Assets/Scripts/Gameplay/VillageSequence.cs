@@ -117,7 +117,7 @@ namespace EquationShift
             destination.z = actor.position.z;
             while (actor.position != destination)
             {
-                actor.position = Vector3.MoveTowards(actor.position, destination, walkSpeed * Time.unscaledDeltaTime);
+                actor.position = Vector3.MoveTowards(actor.position, destination, walkSpeed * Time.deltaTime);
                 FrameWalk(actor.position);
                 yield return null;
             }
@@ -140,7 +140,7 @@ namespace EquationShift
             if (cutsceneCamera == null) yield break;
             Vector3 from = cutsceneCamera.transform.position;
             const float duration = 0.22f;
-            for (float elapsed = 0f; from != cameraStart && elapsed < duration; elapsed += Time.unscaledDeltaTime)
+            for (float elapsed = 0f; from != cameraStart && elapsed < duration; elapsed += Time.deltaTime)
             {
                 cutsceneCamera.transform.position = Vector3.Lerp(from, cameraStart, Mathf.SmoothStep(0f, 1f, elapsed / duration));
                 yield return null;

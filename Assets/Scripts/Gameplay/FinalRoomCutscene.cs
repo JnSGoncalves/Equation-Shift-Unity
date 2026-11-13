@@ -78,7 +78,7 @@ namespace EquationShift
             destination.z = error.position.z;
             while (error.position != destination)
             {
-                error.position = Vector3.MoveTowards(error.position, destination, walkSpeed * Time.unscaledDeltaTime);
+                error.position = Vector3.MoveTowards(error.position, destination, walkSpeed * Time.deltaTime);
                 yield return null;
             }
         }

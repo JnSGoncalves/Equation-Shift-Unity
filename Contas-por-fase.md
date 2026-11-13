@@ -19,18 +19,18 @@ Quando há uma transformação obrigatória, o Player ocupa a célula indicada c
 
 | Fase | Portão e destino | Conta a montar | Blocos fixos sugeridos | Blocos móveis | Transformação necessária | Observação |
 | --- | --- | --- | --- | --- | --- | --- |
-| G2 | Direita → G3 | `2+4=6` | `2` (1), `+` (2), `=` (4), `6` (5, âncora) | `4` | Nenhuma | — |
+| G2 | Direita → G3 | `2+4=6` | `+` (2), `=` (4), `6` (5, âncora) | `2`, `4` | Nenhuma | Alinhe o `2` e o `4` depois da fuga do Erro. |
 | G3 | Baixo → H3 | `7-4=3` | `7` (1), `=` (4), `3` (5, âncora) | `-`, `4` | Nenhuma | Desvio para obter Igual. |
-| H3 | Topo → G3 | `9=9` | `9` (1, âncora), `9` (3) | — | Igual `=` na célula 2 | Obtenção e tutorial. |
+| H3 | Topo → G3 | `9=9` | `9` (1), `9` (3, âncora) | — | Igual `=` na célula 2 | Obtenção e tutorial. |
 | G3 | Direita → G4 | `2+3=5` | `2` (1, âncora), `+` (2), `5` (5) | `3` | Igual `=` na célula 4 | — |
 | G4 | Direita → G5 | `3+4-2=5` | `3` (1, âncora), `+` (2), `=` (6), `5` (7) | `4`, `-`, `2` | Nenhuma | — |
-| G5 | Esquerda → G4 | `1+4=5` | `1` (1, âncora), `+` (2), `=` (4), `5` (5) | `4` | Nenhuma | Opcional. O portão começa aberto na cena atual. |
+| G5 | Esquerda → G4 | — | — | — | Nenhuma | Portão de retorno já aberto. |
 | G5 | Direita → G6 | `15-6+2=11` | `1` (1), `5` (2, âncora), `+` (5), `=` (7), `1` (9) | `-`, `6`, `2`, `1` | Nenhuma | — |
-| G6 | Topo → F6 | `3*2+4=10` | `3` (1, âncora), `+` (4), `=` (6), `0` (8) | `*`, `2`, `4`, `1` | Nenhuma | Desvio para obter Mais. |
+| G6 | Topo → F6 | `3*2+4=10` | `3` (1, âncora), `+` (4), `=` (6), `0` (8) | `*`, `2`, `4`, `1` | Nenhuma | Conta vertical. O `1` móvel fica à esquerda do `0` para formar `10`. |
 | F6 | Topo → E6 | `8+7*2=22` | `8` (1, âncora), `+` (2), `=` (6), `2` (8) | `7`, `*`, `2` ×2 | Nenhuma | — |
 | E6 | Topo → D6 | `3*4+5=17` | `3` (1, âncora), `+` (4), `=` (6), `1` (7) | `*`, `4`, `5`, `7` | Nenhuma | — |
 | D6 | Baixo → E6 | `3+5=8` | `3` (1), `5` (3), `=` (4), `8` (5, âncora) | — | Mais `+` na célula 2 | Obtenção e tutorial. |
-| G6 | Direita → G7 | `3+5*2=13` | `3` (1, âncora), `*` (4), `=` (6), `1` (7) | `5`, `2`, `3` | Mais `+` na célula 2 | Voltar de D6 via E6 e F6. |
+| G6 | Direita → G7 | `4*2+5=13` | `*` (2), `=` (6), `1` (7), `3` (8, âncora) | `4`, `2`, `5` | Mais `+` na célula 4 | Voltar de D6 via E6 e F6. |
 | G7 | Esquerda → G6 | `7-3=4` | `7` (1), `3` (3), `=` (4), `4` (5, âncora) | — | Menos `-` na célula 2 | Obtenção e tutorial. |
 | E6 | Esquerda → E5 | `19-3*4+2=9` | `1` (1), `9` (2, âncora), `*` (5), `=` (9), `9` (10) | `3`, `4`, `+`, `2` | Menos `-` na célula 3 | — |
 | E5 | Esquerda → E4 | `5+6*2-3=14` | `5` (1, âncora), `*` (4), `-` (6), `=` (8), `1` (9) | `6`, `2`, `3`, `4` | Mais `+` na célula 2 | — |
@@ -58,5 +58,5 @@ Em A4, reutilize os dígitos móveis nas contas menores e na principal. As forma
 - **Salas sem portão de conta:** C2 e C6 têm as alavancas. O portão superior de B4 abre com as duas ativações. A passagem inferior de C7 para D7 é livre para que o jogador possa buscar Divisão.
 - **Coletáveis:** Igual em H3, Mais em D6, Menos em G7, Vezes em B5 e Divisão em D7.
 - **Obrigatoriedade das formas:** os 13 portões da tabela com transformação exigem que a equação inclua a âncora e o Player na forma indicada. A abertura temporária do portão permite entrar na sala. A saída pelo portal é liberada quando a conta é resolvida.
-- **Blocos e âncoras:** os fixos marcam a linha horizontal da conta. Nas fases numeradas, os móveis começam deslocados na coluna da célula correspondente e podem ser empurrados pela parte de cima ou de baixo, conforme a sala.
+- **Blocos e âncoras:** os fixos indicam o alinhamento da conta. A maioria das contas usa uma linha horizontal. A saída de G6 para F6 usa uma coluna com o resultado `10` formado lado a lado.
 - Os nomes `<código>-Fase_<número>` seguem a ordem da primeira visita, de `G1-Fase_1` a `C2-Fase_25`. O Build inclui as cenas desse percurso e `A4-Fase_Final`. A versão de C6 com a alavanca é `C6-Fase_22`.

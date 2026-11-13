@@ -12,6 +12,30 @@ using UnityEngine.UI;
 public class G2GateTests
 {
     [UnityTest]
+    public IEnumerator ArrivingFromTheVillageDoesNotClaimTheRightGate()
+    {
+        yield return SceneManager.LoadSceneAsync("G2-Fase_2");
+        yield return null;
+        var player = Object.FindFirstObjectByType<TopDownGridPlayer>();
+        var leftExit = Object.FindObjectsByType<ScenePortal>(FindObjectsSortMode.None)
+            .Single(portal => portal.DestinationSceneId == "G1");
+        Assert.IsNull(leftExit.ArrivalGate);
+        Assert.IsTrue(player.TeleportToCell(leftExit.ArrivalCell));
+        Assert.IsTrue(player.TryMove(Vector2Int.left));
+        yield return WaitFor(() => SceneManager.GetActiveScene().name == "G1-Fase_1" && !SceneTransition.IsTravelling,
+            "The left corridor did not return to the village.");
+
+        Assert.IsTrue(Object.FindFirstObjectByType<TopDownGridPlayer>().TryMove(Vector2Int.right));
+        yield return WaitFor(() => SceneManager.GetActiveScene().name == "G2-Fase_2" && !SceneTransition.IsTravelling,
+            "The village corridor did not lead back to the ruins.");
+        var arrival = Object.FindObjectsByType<ScenePortal>(FindObjectsSortMode.None)
+            .Single(portal => portal.DestinationSceneId == "G1");
+        Assert.AreEqual(arrival.ArrivalCell, Object.FindFirstObjectByType<TopDownGridPlayer>().Cell);
+        var rightGate = GameObject.Find("Gate_Vertical_R").GetComponent<EquationGate>();
+        Assert.IsFalse(rightGate.IsWaitingForArrivalExit);
+    }
+
+    [UnityTest]
     public IEnumerator CorrectEquationOpensRightGateWithCameraAndPlayerFeedback()
     {
         yield return EditorSceneManager.LoadSceneAsyncInPlayMode("Assets/Scenes/G2-Fase_2.unity",
