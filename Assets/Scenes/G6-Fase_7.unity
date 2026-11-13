@@ -510,22 +510,22 @@ Tilemap:
   m_TileMatrixArray:
   - m_RefCount: 0
     m_Data:
-      e00: 1.8e-44
+      e00: 0.0000003980822
       e01: 0
-      e02: 0.8075113
-      e03: -7.1481204e+19
-      e10: 0
+      e02: 0.00000039809356
+      e03: -1.6643015e+10
+      e10: 3.38e-43
       e11: 0
-      e12: 2.5e-43
-      e13: 7.61e-43
-      e20: -1.7076053e+18
+      e12: 3.38e-43
+      e13: 7.82e-43
+      e20: 8.325583e-20
       e21: 0
-      e22: 4.7480864e-10
-      e23: 3.3393695e-18
-      e30: 4.591e-41
+      e22: -2.0273323
+      e23: 8.1569645e-19
+      e30: 4.5908e-41
       e31: 0
-      e32: 7.65e-43
-      e33: 7.62e-43
+      e32: 7.86e-43
+      e33: 7.83e-43
   m_TileColorArray:
   - m_RefCount: 0
     m_Data: {r: 2.985573e-14, g: 2.985573e-14, b: 2.985573e-14, a: 2.985573e-14}
@@ -608,7 +608,7 @@ Tilemap:
   - m_RefCount: 0
     m_Data: {r: 1e-45, g: 1e-45, b: 1e-45, a: 1e-45}
   - m_RefCount: 0
-    m_Data: {r: 1e-45, g: 1e-45, b: 1e-45, a: 1e-45}
+    m_Data: {r: 0.0000003980872, g: 0.0000003980872, b: 0.0000003980872, a: 0.0000003980872}
   m_TileObjectToInstantiateArray: []
   m_AnimationFrameRate: 1
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -2676,6 +2676,7 @@ MonoBehaviour:
   quickShakeFrequency: 35
   openingShakeAmplitude: 0.04
   openingShakeFrequency: 5
+  ambientShakeInterval: {x: 14, y: 24}
 --- !u!114 &989047465
 MonoBehaviour:
   m_ObjectHideFlags: 0

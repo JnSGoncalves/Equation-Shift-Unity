@@ -66,7 +66,7 @@ namespace EquationShift
             rect.anchorMin = rect.offsetMin = rect.offsetMax = Vector2.zero;
             black.GetComponent<Image>().color = Color.black;
 
-            for (float elapsed = 0f; elapsed < fadeDuration; elapsed += Time.unscaledDeltaTime)
+            for (float elapsed = 0f; elapsed < fadeDuration; elapsed += Time.deltaTime)
             {
                 curtain.alpha = Mathf.Clamp01(elapsed / fadeDuration);
                 yield return null;

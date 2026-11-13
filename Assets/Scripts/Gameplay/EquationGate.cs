@@ -105,7 +105,7 @@ namespace EquationShift
 
         private void Update()
         {
-            if (SceneTransition.IsTravelling) return;
+            if (SceneTransition.IsTravelling || Time.timeScale == 0f) return;
             // Serialized Inspector edits follow the same path as calls to SetOpen.
             if (isOpen != requestedOpen) SetOpen(isOpen);
             if (arrivingPlayer == null || arrivingPlayer.IsMoving || OverlapsArrivalPlayer()) return;
@@ -165,7 +165,7 @@ namespace EquationShift
         {
             PlayGateAnimation(open);
             float duration = open ? OpeningDuration : ClosingDuration;
-            yield return new WaitForSecondsRealtime(duration);
+            yield return new WaitForSeconds(duration);
             ApplyConfiguredState();
             IsOpening = IsClosing = false;
             stateChange = null;
@@ -319,7 +319,7 @@ namespace EquationShift
             if (animator == null) animator = GetComponent<Animator>();
             if (animator == null || animator.runtimeAnimatorController == null) return;
             animator.enabled = true;
-            animator.updateMode = AnimatorUpdateMode.UnscaledTime;
+            animator.updateMode = AnimatorUpdateMode.Normal;
             animator.speed = 1f;
             int stateHash = Animator.StringToHash("Base Layer." + state);
             if (!animator.HasState(0, stateHash)) return;

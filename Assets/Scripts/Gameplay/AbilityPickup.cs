@@ -44,7 +44,7 @@ namespace EquationShift
 
         private void Update()
         {
-            if (!IsCollected && ResolveReferences()) TryCollect(player);
+            if (Time.timeScale > 0f && !IsCollected && ResolveReferences()) TryCollect(player);
         }
 
         public bool TryCollect(TopDownGridPlayer gridPlayer)
@@ -72,7 +72,7 @@ namespace EquationShift
 
         private void LateUpdate()
         {
-            if (!IsCollected) return;
+            if (!IsCollected || Time.timeScale == 0f) return;
             if (collector == null || !collector.gameObject.activeInHierarchy) { Destroy(gameObject); return; }
             elapsed += Time.deltaTime;
             float progress = Mathf.Clamp01(elapsed / Mathf.Max(0.02f, collectionDuration));
@@ -89,6 +89,7 @@ namespace EquationShift
         private static IEnumerator TransformAfterRemoval(TopDownGridPlayer target, PlayerForm collectedForm)
         {
             yield return null;
+            while (Time.timeScale == 0f) yield return null;
             if (target == null) yield break;
             target.UnlockForm(collectedForm);
             target.CurrentForm = collectedForm;

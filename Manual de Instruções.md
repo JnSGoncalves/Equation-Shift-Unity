@@ -32,6 +32,7 @@ Pare ao lado de **cinco moradores diferentes, incluindo o Erro**, para ouvir sua
 | `D` ou `→` | Andar para a direita |
 | `Tab` | Alternar entre a Interrogação e as formas coletadas |
 | `R` | Restaurar os blocos e voltar ao início ou à entrada da sala |
+| `Esc` | Abrir ou fechar o menu de pausa |
 
 Para **empurrar**, ande na direção do bloco móvel. A célula para onde ele vai precisa estar livre. Para **conversar** ou **acionar uma alavanca**, pare numa das quatro células vizinhas. Para **coletar** uma transformação, pise na célula do item.
 
@@ -43,6 +44,23 @@ Para **empurrar**, ande na direção do bloco móvel. A célula para onde ele va
 | ![Bloco fixo com o número 6](docs/manual/ancora.png) | **Âncora** | Bloco fixo que precisa entrar na conta do portão ao qual está ligado. |
 | ![Portão horizontal fechado](docs/manual/portao.png) | **Portão** | Passagem que se abre ao cumprir a condição da sala. |
 | ![Alavanca do jogo](docs/manual/alavanca.png) | **Alavanca** | Mecanismo que você aciona ao parar ao lado dele. |
+
+## Menu de pausa
+
+Pressione **Esc** durante a partida para pausar e abrir o menu.
+
+![Menu de pausa com as quatro opções](docs/manual/menu-de-pausa.png)
+
+| Opção | O que faz |
+| --- | --- |
+| **Continuar** | Retoma a partida de onde você parou. |
+| **Resetar fase** | Funciona como **R**. Recoloca os blocos nas posições iniciais e volta ao início ou à entrada da sala. As formas coletadas continuam disponíveis. |
+| **Voltar ao menu** | Encerra a partida atual e volta à tela de título após a confirmação. |
+| **Sair do Jogo** | Fecha o jogo após a confirmação. |
+
+Ao escolher **Voltar ao menu** ou **Sair do Jogo**, aparece o aviso abaixo. Selecione **Confirmar** para prosseguir ou **Cancelar** para voltar ao menu de pausa.
+
+> Tem certeza? Você perderá seu progresso até o momento e terá que recomeçar o jogo.
 
 ## A primeira conta nas ruínas
 
